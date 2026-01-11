@@ -16,6 +16,7 @@ creación etiqueta
 4-git push origin v1.0
 5-git push origin --tags
 
+git tag -a v1.2 ee3b04a -m "Configuración y gestión de roles"
 
 
 
