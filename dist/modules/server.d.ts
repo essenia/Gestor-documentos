@@ -5,6 +5,7 @@ declare class Server {
     constructor();
     listen(): void;
     routes(): void;
+    midlewares(): void;
 }
 export default Server;
 //# sourceMappingURL=server.d.ts.map

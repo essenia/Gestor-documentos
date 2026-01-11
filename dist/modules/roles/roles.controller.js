@@ -7,10 +7,16 @@ exports.createRole = exports.getRoles = void 0;
 const role_model_1 = __importDefault(require("./role.model"));
 //para obtener todos los Roles
 const getRoles = async (req, res) => {
-    //Buscamos todos los registros en la tabla Rol
-    const roles = await role_model_1.default.findAll();
-    // return datos de forma JSON
-    res.json(res);
+    try {
+        //Buscamos todos los registros en la tabla Rol
+        const roles = await role_model_1.default.findAll();
+        // return datos de forma JSON
+        res.json(roles);
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Error al obtener roles' });
+    }
 };
 exports.getRoles = getRoles;
 // Para crear un Nuevo Rol

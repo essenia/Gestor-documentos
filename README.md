@@ -1,3 +1,12 @@
+http://localhost:3000/api/users
+
+{
+  "email": "admin@admin.com",
+  "password": "123456",
+  "id_rol": 1
+}
+
+
 echo "# Gestor-documentos" >> README.md
 git init
 git add README.md
@@ -7,7 +16,9 @@ git remote add origin https://github.com/essenia/Gestor-documentos.git
 git push -u origin main
 
 ****
+git add .
 
+git push
 creación etiqueta
 
 1-   git log --oneline
@@ -15,7 +26,9 @@ creación etiqueta
 3-git show v1.0
 4-git push origin v1.0
 5-git push origin --tags
-
+ git tag -a v2.1  
+git push origin v2.1
+ git tag -a v2.1 -m "Versión 2.1"
 git tag -a v1.2 ee3b04a -m "Configuración y gestión de roles"
 
 
@@ -60,3 +73,12 @@ npm run dev
 
 "verbatimModuleSyntax": true
  deberia ser comentada  Por qué TypeScript  estaba “forzando” a require
+
+
+en el login 
+if (user.requiere_cambio_password) {
+  return res.status(403).json({
+    message: 'Debe cambiar su contraseña',
+    requiereCambioPassword: true
+  });
+}
