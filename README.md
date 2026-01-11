@@ -6,6 +6,17 @@ git branch -M main
 git remote add origin https://github.com/essenia/Gestor-documentos.git
 git push -u origin main
 
+****
+
+creación etiqueta
+
+1-   git log --oneline
+2- git tag -a v1.0 ee3b04a -m "Versión 1.0"
+3-git show v1.0
+4-git push origin v1.0
+5-git push origin --tags
+
+
 
 
 *****
@@ -46,4 +57,5 @@ dentro package.json ponemos ==> "dev" : "nodemon dist/index.js"
 npm run dev
 
 
-
+"verbatimModuleSyntax": true
+ deberia ser comentada  Por qué TypeScript  estaba “forzando” a require
