@@ -21,6 +21,9 @@ git add .
 git push
 creación etiqueta
 
+
+git tag -a v1.2 -m "Implementación y corrección de autenticación JWT"
+git push origin v1.2
 1-   git log --oneline
 2- git tag -a v1.0 ee3b04a -m "Versión 1.0"
 3-git show v1.0
@@ -103,6 +106,38 @@ npm install --save-dev @types/jsonwebtoken@8
 
 Se corrige la creación del token JWT en TypeScript resolviendo conflictos de tipado con jsonwebtoken.
 Se utiliza la versión estable v8, compatible con Express y CommonJS, permitiendo el uso correcto de jwt.sign con expiresIn y variables de entorno.
+
+
+ADMIN crea CLIENTE (createUser) → requiere_cambio_password = true
+2️⃣ CLIENTE hace login (auth.controller.ts/login)
+3️⃣ Backend detecta requiere_cambio_password = true → devuelve 403 con mensaje
+4️⃣ Frontend redirige a /cambiar-password → llama a changePassword()
+5️⃣ Backend actualiza contraseña y pone requiere_cambio_password = false
+6️⃣ Cliente hace login de nuevo → acceso normal
+
+
+
+Post --->  http://localhost:3000/api/auth/login
+{
+  "email": "abogada@abogada.com",
+  "password": "123456"
+}
+
+
+{
+  "email": "cliente@gmail.com",
+  "password": "temporal123"
+}
+
+
+
+Post ---> http://localhost:3000/api/auth/change-password
+
+{
+  "userId": 5,
+   "newPassword": "Cliente123456"
+
+}
 
 
 

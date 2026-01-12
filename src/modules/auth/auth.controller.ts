@@ -30,70 +30,108 @@ export const login = async (req: Request, res: Response) => {
       return res.status(400).json({ message: "Email y password requeridos" });
     }
     //Buscar Usuario y Rol
-    const usr = await User.findOne({
+    const user = await User.findOne({
       where: { email },
       include: [{ model: Role, attributes: ["nombre"] }],
     });
-    if (!User) {
-      return res.status(401).json({
-        message: "Credenciales inválidas",
-      });
+   if (!user) {
+      return res.status(401).json({ message: "Credenciales inválidas" });
     }
     //Comparar Passwordç
-     const userAny = User as any;
- 
-     const rol = userAny.Role?.nombre;
+    const passwordHash = user.getDataValue("password_hash");
+
+     const rol = user.getDataValue("Role")?.nombre;
+
+    //  const rol = userAny.Role?.nombre;
     //  const userId = userAny.dataValues.id;
+    
 
+// const passwordHash = user.getDataValue('password_hash');
 
-    const passwordHash = (User as any).dataValues.password_hash;
+    // const passwordHash = User.ge
+    
+    // password_hash;
 
-    const validPassword = await bcrypt.compare(password, passwordHash);
+const validPassword = await bcrypt.compare(password, passwordHash);
 
     if (!validPassword) {
       return res.status(401).json({ message: "Credenciales inválidas" });
     }
 
     //Requiere cambiar Pass solo para Client
-    const requiereCambio = (User as any).dataValues.requiere_cambio_password;
-    const userId = (User as any).dataValues.id;
-    const Email = (User as any).dataValues.email;
+    const requiereCambio = user.getDataValue("requiere_cambio_password");
+    const userId = user.getDataValue("id");
+    const userEmail = user.getDataValue("email");
 
     if (requiereCambio) {
       return res.status(403).json({
-        message: "Debe Cambiar su contraseña",
+          message: "Debe cambiar su contraseña",
         requiereCambio: true,
-        userId: userId,
+        userId: user.getDataValue("id")
       });
     }
     // Generar JWT
     
 
     const JWT_SECRET = process.env.JWT_SECRET!;
-    const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '8h';
-    if (!JWT_SECRET) throw new Error('JWT_SECRET no definido en .env');
+    let  JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '8h';
+    // if (!JWT_SECRET) throw new Error('JWT_SECRET no definido en .env');
+    // Validar formato simple: número seguido de s/m/h/d
+if (!/^\d+[smhd]$/.test(JWT_EXPIRES_IN)) {
+  console.warn(`JWT_EXPIRES_IN inválido: ${JWT_EXPIRES_IN}, usando "8h" por defecto`);
+  JWT_EXPIRES_IN = "8h";
+}
     
 const token = jwt.sign(
-   {userId : userId, 
+   {userId: user.getDataValue("id"), rol
 
-        rol},
+    },
   JWT_SECRET,
   { expiresIn: JWT_EXPIRES_IN }
 );
    return res.json({
       message: 'Login exitoso',
       user: {
-        id : userId, Email
-   ,rol
+         id: userId,
+        email: userEmail,
+        rol
         //  id: user.id, email: user.email, rol 
         },
       token
     });   
 
   } catch (error) {
-    console.error(error);
-    res.status(500).json({
-      msg: "Error Login..",
-    });
-  }
-};
+   console.error('ERROR LOGIN 👉', error);
+  return res.status(500).json({
+    msg: 'Error Login',
+    error: error instanceof Error ? error.message : error
+  })
+}
+
+}
+
+//Change PassWord
+
+export const changePassword = async (req: Request, res: Response) =>{
+   
+    try {
+        const  {userId , newPassword} = req.body;
+        if(!userId || ! newPassword){
+                  return res.status(400).json({ message: 'Datos incompletos' });  }
+                  const hash = await bcrypt.hash(newPassword,10);
+                  await User.update(
+                    {
+                        password_hash : hash,
+                        requiere_cambio_password: false
+                         },
+                         { where: { id: userId } }
+                  );
+                      res.json({ message: 'Contraseña actualizada correctamente' });
+
+        
+    } catch (error) {
+         console.error(error);
+    res.status(500).json({ message: 'Error al cambiar la contraseña' });
+    }
+
+}

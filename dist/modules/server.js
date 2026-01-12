@@ -7,6 +7,7 @@ const express_1 = __importDefault(require("express"));
 const roles_routes_1 = __importDefault(require("./roles/roles.routes"));
 const users_routes_1 = __importDefault(require("./users/users.routes"));
 const cors_1 = __importDefault(require("cors"));
+const auth_routes_1 = __importDefault(require("./auth/auth.routes"));
 class Server {
     app;
     port;
@@ -31,6 +32,7 @@ class Server {
         this.app.use(express_1.default.urlencoded({ extended: true }));
         this.app.use("/api/roles", roles_routes_1.default);
         this.app.use("/api/users", users_routes_1.default);
+        this.app.use('/api/auth', auth_routes_1.default);
     }
     midlewares() {
         //PArseamos El Body...

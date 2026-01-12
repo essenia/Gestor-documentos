@@ -2,6 +2,7 @@ import express, { Application, Request, Response } from "express";
 import rolesRoutes from "./roles/roles.routes";
 import usersRoutes from "./users/users.routes";
 import cors from "cors";
+import authRoutes from "./auth/auth.routes";
 
 class Server {
   public app: Application;
@@ -30,6 +31,8 @@ class Server {
     this.app.use(express.urlencoded({ extended: true }));
     this.app.use("/api/roles", rolesRoutes);
     this.app.use("/api/users", usersRoutes);
+    this.app.use('/api/auth', authRoutes);
+
   }
   midlewares() {
     //PArseamos El Body...
