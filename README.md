@@ -75,6 +75,8 @@ npm run dev
  deberia ser comentada  Por qué TypeScript  estaba “forzando” a require
 
 
+npm i --save-dev @types/jsonwebtoken
+
 en el login 
 if (user.requiere_cambio_password) {
   return res.status(403).json({
@@ -82,3 +84,27 @@ if (user.requiere_cambio_password) {
     requiereCambioPassword: true
   });
 }
+
+--------- JWT_SECRET  => se usa para firmar los tokens JWT
+
+
+const JWT_SECRET = process.env.JWT_SECRET as string;
+const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '8h';
+
+he tenido prob en JWT me salía el error en sign y error de No overload matches this call
+ TENIA QUE  installar  v8
+El problema específico con TypeScript
+sign tiene overloads incompatibles
+sign(payload, null, { algorithm: "none" })
+debe trabajar con V8 de Jsonwebtoken 
+
+npm install --save-dev @types/jsonwebtoken@8
+
+
+Se corrige la creación del token JWT en TypeScript resolviendo conflictos de tipado con jsonwebtoken.
+Se utiliza la versión estable v8, compatible con Express y CommonJS, permitiendo el uso correcto de jwt.sign con expiresIn y variables de entorno.
+
+
+
+
+

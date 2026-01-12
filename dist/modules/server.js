@@ -29,7 +29,7 @@ class Server {
         });
         this.app.use(express_1.default.json());
         this.app.use(express_1.default.urlencoded({ extended: true }));
-        this.app.use('/api/roles', roles_routes_1.default);
+        this.app.use("/api/roles", roles_routes_1.default);
         this.app.use("/api/users", users_routes_1.default);
     }
     midlewares() {
