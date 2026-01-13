@@ -29,7 +29,7 @@ export const login = async (req: Request, res: Response) => {
     if (!email || !password) {
       return res.status(400).json({ message: "Email y password requeridos" });
     }
-    //Buscar Usuario y Rol
+    //Validamos si el usuarios ya existe en DB
     const user = await User.findOne({
       where: { email },
       include: [{ model: Role, attributes: ["nombre"] }],
@@ -42,15 +42,9 @@ export const login = async (req: Request, res: Response) => {
 
      const rol = user.getDataValue("Role")?.nombre;
 
-    //  const rol = userAny.Role?.nombre;
-    //  const userId = userAny.dataValues.id;
-    
+   
 
-// const passwordHash = user.getDataValue('password_hash');
-
-    // const passwordHash = User.ge
-    
-    // password_hash;
+    //Validomos Password
 
 const validPassword = await bcrypt.compare(password, passwordHash);
 

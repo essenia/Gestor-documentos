@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { createRole, getRoles } from "./roles.controller";
+import { validateJWT } from "../../middlewares/validate-jwt";
 
 
 const router = Router();

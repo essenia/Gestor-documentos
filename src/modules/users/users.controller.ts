@@ -25,7 +25,12 @@ const {email, password, id_rol} = req.body;
   // Cifra la contraseña usando bcrypt con 10 rondas de salt
 const hash = await bcrypt.hash(password,10);
     const requiereCambioPassword = id_rol === 3; // CLIENTE
-
+    const user =  await User.findOne({ where: {email : email}});
+   if (user){
+    res.status(400).json({
+        msg : ` Ya existe un Usuario con el nombre ${email}`
+    })
+   }
   // Crea un nuevo usuario en la base de datos
 await User.create({
 
@@ -43,18 +48,12 @@ res.sendStatus(201);
 
 }
 
-// export const changePassword = async (req: Request, res: Response) => {
-//   const { userId, newPassword } = req.body;
+export const getUser = (req: Request, res: Response) => {
+  const user = res.locals.user;
 
-//   const hash = await bcrypt.hash(newPassword, 10);
+  console.log(user.userId);
+  console.log(user.rol);
 
-//   await User.update(
-//     {
-//       password_hash: hash,
-//       requiere_cambio_password: false
-//     },
-//     { where: { id: userId } }
-//   );
+  res.json({ message: "Usuarios protegidos" });
+};
 
-//   res.json({ message: 'Contraseña actualizada' });
-// };

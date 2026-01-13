@@ -21,7 +21,7 @@ const login = async (req, res) => {
         if (!email || !password) {
             return res.status(400).json({ message: "Email y password requeridos" });
         }
-        //Buscar Usuario y Rol
+        //Validamos si el usuarios ya existe en DB
         const user = await user_model_1.default.findOne({
             where: { email },
             include: [{ model: role_model_1.default, attributes: ["nombre"] }],
@@ -32,11 +32,7 @@ const login = async (req, res) => {
         //Comparar Passwordç
         const passwordHash = user.getDataValue("password_hash");
         const rol = user.getDataValue("Role")?.nombre;
-        //  const rol = userAny.Role?.nombre;
-        //  const userId = userAny.dataValues.id;
-        // const passwordHash = user.getDataValue('password_hash');
-        // const passwordHash = User.ge
-        // password_hash;
+        //Validomos Password
         const validPassword = await bcrypt_1.default.compare(password, passwordHash);
         if (!validPassword) {
             return res.status(401).json({ message: "Credenciales inválidas" });

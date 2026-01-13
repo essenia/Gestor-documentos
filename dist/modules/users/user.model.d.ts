@@ -1,3 +1,3 @@
-declare const User: import("sequelize").ModelCtor<import("sequelize").Model<any, any>>;
+declare const User: any;
 export default User;
 //# sourceMappingURL=user.model.d.ts.map

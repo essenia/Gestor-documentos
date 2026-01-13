@@ -8,6 +8,7 @@ const roles_routes_1 = __importDefault(require("./roles/roles.routes"));
 const users_routes_1 = __importDefault(require("./users/users.routes"));
 const cors_1 = __importDefault(require("cors"));
 const auth_routes_1 = __importDefault(require("./auth/auth.routes"));
+const connection_1 = __importDefault(require("./db/connection"));
 class Server {
     app;
     port;
@@ -17,6 +18,7 @@ class Server {
         this.listen();
         this.midlewares();
         this.routes();
+        this.dbConnect();
     }
     listen() {
         console.log(this.port);
@@ -38,6 +40,16 @@ class Server {
         //PArseamos El Body...
         // this.app.use(express.json());
         this.app.use((0, cors_1.default)());
+    }
+    async dbConnect() {
+        try {
+            await connection_1.default.authenticate();
+            console.log("✅ Connection  has been established successfully.");
+            console.log(" Modelos sincronizados correctamente.");
+        }
+        catch (error) {
+            console.log(error);
+        }
     }
 }
 exports.default = Server;

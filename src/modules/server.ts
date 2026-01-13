@@ -3,6 +3,8 @@ import rolesRoutes from "./roles/roles.routes";
 import usersRoutes from "./users/users.routes";
 import cors from "cors";
 import authRoutes from "./auth/auth.routes";
+import db from "./db/connection";
+
 
 class Server {
   public app: Application;
@@ -13,6 +15,8 @@ class Server {
     this.listen();
     this.midlewares();
     this.routes();
+    this.dbConnect();
+
   }
 
   listen() {
@@ -39,6 +43,21 @@ class Server {
     // this.app.use(express.json());
     this.app.use(cors());
   }
+  async dbConnect() {
+    try {
+      await db.authenticate();
+   console.log("✅ Connection  has been established successfully.");
+ 
+
+
+
+      console.log(" Modelos sincronizados correctamente.");
+    } catch (error: any) {
+      console.log(error);
+    }
+  }
 }
+
+
 
 export default Server;

@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createUser = exports.getUsers = void 0;
+exports.getUser = exports.createUser = exports.getUsers = void 0;
 const user_model_1 = __importDefault(require("./user.model"));
 const role_model_1 = __importDefault(require("../roles/role.model"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
@@ -28,6 +28,12 @@ const createUser = async (req, res) => {
         // Cifra la contraseña usando bcrypt con 10 rondas de salt
         const hash = await bcrypt_1.default.hash(password, 10);
         const requiereCambioPassword = id_rol === 3; // CLIENTE
+        const user = await user_model_1.default.findOne({ where: { email: email } });
+        if (user) {
+            res.status(400).json({
+                msg: ` Ya existe un Usuario con el nombre ${email}`
+            });
+        }
         // Crea un nuevo usuario en la base de datos
         await user_model_1.default.create({
             email,
@@ -44,16 +50,11 @@ const createUser = async (req, res) => {
     }
 };
 exports.createUser = createUser;
-// export const changePassword = async (req: Request, res: Response) => {
-//   const { userId, newPassword } = req.body;
-//   const hash = await bcrypt.hash(newPassword, 10);
-//   await User.update(
-//     {
-//       password_hash: hash,
-//       requiere_cambio_password: false
-//     },
-//     { where: { id: userId } }
-//   );
-//   res.json({ message: 'Contraseña actualizada' });
-// };
+const getUser = (req, res) => {
+    const user = res.locals.user;
+    console.log(user.userId);
+    console.log(user.rol);
+    res.json({ message: "Usuarios protegidos" });
+};
+exports.getUser = getUser;
 //# sourceMappingURL=users.controller.js.map

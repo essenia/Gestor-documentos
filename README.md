@@ -117,6 +117,10 @@ ADMIN crea CLIENTE (createUser) → requiere_cambio_password = true
 
 
 
+loging y generar Token 
+
+
+
 Post --->  http://localhost:3000/api/auth/login
 {
   "email": "abogada@abogada.com",
@@ -138,8 +142,17 @@ Post ---> http://localhost:3000/api/auth/change-password
    "newPassword": "Cliente123456"
 
 }
+ to generate a token like this with this library is:
 
 
 
+jwt.sign({
+  data: 'foobar'
+}, 'secret', { expiresIn: '1h' });
 
 
+
+***+*Siguiente paso crear validate-jwt  para proteger rutas verificando que el usuario tenga un JWT (JSON Web Token) válido.
+
+
+**decoded es la información del usuario que viene dentro del JWT después de validarlo.
