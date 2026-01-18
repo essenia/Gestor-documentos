@@ -18,9 +18,23 @@ export const getUsers = async (req:Request, res:Response)=>{
 export const createUser = async (req:Request,res :Response)=> {
     try {
       // Extrae email, password y rol  de la solicitud
-const {email, password, id_rol} = req.body;
-   if (!email || !password || !id_rol) {
+// const {email, password, repeatPassword,id_rol} = req.body;
+const {email, password, repeatPassword,id_rol} = req.body;
+
+    console.log(req.body); 
+  //  if (!email || !password  || !repeatPassword  || !id_rol) {
+
+   if (!email || !password  || !repeatPassword  ) {
       return res.status(400).json({ message: 'Datos incompletos' });
+    }
+
+     // Validación de repetir contraseña
+  
+
+    if (password !== repeatPassword) {
+      return res.status(400).json({
+        message: 'Las contraseñas no coinciden'
+      });
     }
   // Cifra la contraseña usando bcrypt con 10 rondas de salt
 const hash = await bcrypt.hash(password,10);

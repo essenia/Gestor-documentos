@@ -177,5 +177,22 @@ ng g c components/login
 
 
 
+http://localhost:3000/api/users
+parte del test 
+{
+  "email": "usuario3@test.com",
+  "password": "123456",
+  "repeatPassword": "123456",
+  "id_rol": 3
+}
+
+http://localhost:3000/api/auth/change-password
+
+{
+  "userId": 40,
+  "newPassword": "12345678"
+}
+
+
 
 

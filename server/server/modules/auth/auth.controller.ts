@@ -30,7 +30,7 @@ export const login = async (req: Request, res: Response) => {
        console.log(user?.toJSON());
 
     if (!user) {
-      return res.status(401).json({ message: "Credenciales inválidas" });
+      return res.status(401).json({ message: "El usuario no existe" });
     }
     //Comparar Passwordç
     const passwordHash = user.getDataValue("password_hash");
@@ -42,7 +42,7 @@ export const login = async (req: Request, res: Response) => {
     const validPassword = await bcrypt.compare(password, passwordHash);
 
     if (!validPassword) {
-      return res.status(401).json({ message: "Credenciales inválidas" });
+      return res.status(401).json({ message: "Contraseña incorrecta" });
     }
 
     //Requiere cambiar Pass solo para Client
