@@ -96,3 +96,6 @@ https://getbootstrap.com/docs/5.3/components/spinners/
 node dist/index.js
 https://bootswatch.com/lumen/
 
+
+
+https://rxjs.dev/deprecations/subscribe-arguments

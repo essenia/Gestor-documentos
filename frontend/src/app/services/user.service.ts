@@ -19,16 +19,25 @@ export class UserService {
     this.myAppUrl = environment.endpoint;
     this.myApiUrl = 'api/users/'
   }
-  signIn(user: User):Observable<any>{
-   return this.http.post<any>(`${this.myAppUrl}${this.myApiUrl}`, user)
-    .pipe(
-      tap(res => {
-        //  Guardamos token que devuelve el backend
-        if (res && res.token) {
-          localStorage.setItem('token', res.token);
-        }
-      })
-    );
+  // signIn(user: User):Observable<any>{
+  //  return this.http.post<any>(`${this.myAppUrl}${this.myApiUrl}`, user)
+  //   .pipe(
+  //     tap(res => {
+  //       //  Guardamos token que devuelve el backend
+  //       if (res && res.token) {
+  //         localStorage.setItem('token', res.token);
+  //       }
+  //     })
+  //   );
 
+  // }
+
+  signIn(user: User):Observable<any>{
+   return this.http.post<any>(`${this.myAppUrl}${this.myApiUrl}`, user);
+    
+  }
+
+  login(user : User):Observable<string> {
+    return this.http.post<string>(`${this.myAppUrl}api/auth/login`, user);
   }
 }

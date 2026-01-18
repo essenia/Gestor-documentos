@@ -1,72 +1,92 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink,RouterModule } from '@angular/router';
-import {  NgForOf, NgIf } from '@angular/common';
+// Importa RouterLink y RouterModule para navegar entre rutas
+import { RouterLink, RouterModule } from '@angular/router';
+// Importa las directivas NgForOf y NgIf desde Angular
+import { NgForOf, NgIf } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms'; 
+import { FormsModule } from '@angular/forms';
+// Importa ToastrService para mostrar notificaciones (mensajes de alerta)
 import { ToastrService } from 'ngx-toastr';
 import { User } from '../../interfaces/user';
 import { UserService } from '../../services/user.service';
 import { Router } from '@angular/router';
-import { SpinnerComponent } from "../../shared/spinner/spinner.component";
+// Importa un componente Spinner para mostrar una animación de carga
+import { SpinnerComponent } from '../../shared/spinner/spinner.component';
+// Importa HttpErrorResponse para manejar errores de peticiones HTTP
 import { HttpErrorResponse } from '@angular/common/http';
-
+import { ErrorService } from '../../services/error.service';
 
 @Component({
   selector: 'app-sign-in',
   imports: [CommonModule, RouterLink, FormsModule, SpinnerComponent],
   templateUrl: './sign-in.component.html',
-  styleUrl: './sign-in.component.css'
+  styleUrl: './sign-in.component.css',
 })
 export class SignInComponent {
+  email: string = '';
+  password: string = '';
+  rol: string = '';
+  confirmPassword: string = '';
+  // Variable para controlar la animación de carga
+  loading: boolean = false;
 
-  email :string = '';
-  password : string = ''
-  rol : string = '';
-  confirmPassword : string = ''
+  constructor(
+    private toastr: ToastrService,
+    private _userService: UserService,
+    private router: Router, private _errorService : ErrorService
+  ) {}
 
-  loading : boolean = false;
-
-constructor(private toastr: ToastrService,private _userService: UserService,private router:Router) {}
-
-  
-  ngOnInit(): void {
- 
+  ngOnInit(): void {}
+  addUser() {
+    //validare que el usuario ingrese valores
+    if (this.email == '' || this.password == '' || this.confirmPassword == '') {
+      this.toastr.error('Todos los campos son obligatorios', 'Error');
+    }
+    // Validar que las contraseñas coincidan
+    if (this.password != this.confirmPassword) {
+      this.toastr.error('las password ingresadas son distintas', 'Error');
+      return;
+    }
+    // Crear un objeto user con los datos ingresados
+    const user: User = {
+      email: this.email,
+      password: this.password,
+      repeatPassword: this.confirmPassword, // ✅ necesario para el backend
+    };
+    console.log('Usuario a enviar:', user);
+    // Activar el spinner de carga
+    this.loading = true;
+    // Llamada al servicio para registrar el usuario
+    this._userService.signIn(user).subscribe({
+      next: (v) => {
+        // Si la petición es exitosa
+        this.loading = false;
+        this.toastr.success(
+          'el usuario fue registrado con exito',
+          'Usuario registrado',
+        );
+        this.router.navigate(['/login']);
+      },
+      error: (e: HttpErrorResponse) => {
+        // Si ocurre un error
+        this.loading = false;
+        this._errorService.msjError(e);
+      }
+      // Mensaje cuando la suscripción finaliza
+      // complete: () => console.info('complete'),
+    });
   }
-addUser(){
-//validare que el usuario ingrese valores
-if(this.email == '' || this.password == '' ||this.confirmPassword ==''){
-  this.toastr.error('Todos los campos son obligatorios', 'Error');
+  // msjError(e: HttpErrorResponse) {
+  //     const message = e.error.msg || e.error.message; // revisa ambos campos
 
+  //   if (message) {
+  //   this.toastr.error(message, 'Error');
+  //   } else {
+  //     this.toastr.error(
+  //       'upps occurio un error comuniquese con el administrador ',
+  //       'Error',
+  //     );
+  //   }
+  // }
 }
-if(this.password != this.confirmPassword){
-    this.toastr.error('las password ingresadas son distintas', 'Error');
-  return;
-}
-const user : User = {
- email :this.email,
- password: this.password
-}
-this.loading = true;
-this._userService.signIn(user).subscribe(data => {
-    this.loading = false;
-    this.toastr.success('el usuario fue registrado con exito', 'Usuario registrado');
-this.router.navigate(['/login']);
-
-},(event : HttpErrorResponse) => { 
-   this.loading =  false;
-   if(event.error.msg){
-     this.toastr.error(event.error.msg, 'Error')
-
-   }else{
-      this.toastr.error('upps occurio un error comuniquese con el administrador ', 'Error')
-
-   }
-  
- }
-)
-}
-}
-
-
-

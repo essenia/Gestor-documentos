@@ -7,19 +7,19 @@
     <img src="log.png" class="logo" alt="img login" />
     <h3>Login</h3>
 <div class="form-floating mb-3">
-  <input type="text" class="form-control" placeholder="ingrese usuario">
+  <input type="text" [(ngModel)]="email" class="form-control" placeholder="ingrese usuario">
   <label>Usuario</label>
 </div>
 
 <div class="form-floating mb-3">
-  <input type="password" class="form-control"  placeholder="ingrese password">
+  <input type="password"  [(ngModel)]="password" class="form-control"  placeholder="ingrese password">
   <label >Password</label>
 </div>
 
 
 <div class="d-grid gap-2">
-
-<button type="button" class="btn btn-primary" btn-large [routerLink]="['/dashboard']" >aceptar</button>
+<!-- [routerLink]="['/dashboard']"  -->
+<button type="button" class="btn btn-primary" btn-large (click)="login()" >aceptar</button>
 <p class="mb-3">No tiene cuenta?  
 
       <a [routerLink]="['/signIn']" class="text-primary text-decoration-none">Registrar</a>
@@ -28,4 +28,6 @@
 </div>
 
   </div>
+    <app-spinner  *ngIf="loading"></app-spinner>
+
 </div>
