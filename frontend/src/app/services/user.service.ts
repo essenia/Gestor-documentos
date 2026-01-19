@@ -47,8 +47,8 @@ export class UserService {
   }
 
  // Cambio de contraseña
- changePassword(userId: number, newPassword: string): Observable<any> {
-  return this.http.put(    'http://localhost:3000/api/auth/change-password',
+ changePassword(userId: number, newPassword: string){
+  return this.http.post('http://localhost:3000/api/auth/change-password',
  {
     userId,
     newPassword

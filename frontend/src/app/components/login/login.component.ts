@@ -54,7 +54,10 @@ export class LoginComponent {
       // Cliente obligado a cambiar contraseña
       if (res.requiereCambio) {
         // localStorage.setItem('userId', res.userId);
-              localStorage.setItem('userId', res.user.id);
+         this.userId = res.userId;
+         localStorage.setItem('userId', res.userId);
+
+              // localStorage.setItem('userId', res.user.id);
 
         
         this.router.navigate(['/change-password']);

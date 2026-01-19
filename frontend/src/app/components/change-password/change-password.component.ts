@@ -48,6 +48,7 @@ export class ChangePasswordComponent {
   this._userService.changePassword(userId, newPassword).subscribe({
     next: () => {
       this.loading = false;
+      
       this.toastr.success('Contraseña actualizada');
       this.router.navigate(['/dashboard']); // Redirige al dashboard
     },
