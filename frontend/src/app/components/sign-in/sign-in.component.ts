@@ -16,6 +16,8 @@ import { SpinnerComponent } from '../../shared/spinner/spinner.component';
 // Importa HttpErrorResponse para manejar errores de peticiones HTTP
 import { HttpErrorResponse } from '@angular/common/http';
 import { ErrorService } from '../../services/error.service';
+import { ActivatedRoute } from '@angular/router';
+
 
 @Component({
   selector: 'app-sign-in',
@@ -34,10 +36,18 @@ export class SignInComponent {
   constructor(
     private toastr: ToastrService,
     private _userService: UserService,
-    private router: Router, private _errorService : ErrorService
-  ) {}
+    private router: Router, private _errorService : ErrorService,    private route: ActivatedRoute) {}
 
-  ngOnInit(): void {}
+  id_rol!: number;
+
+ ngOnInit(): void {
+  const rol = this.route.snapshot.queryParamMap.get('rol'); // 'ABOGADA' o 'CLIENTE'
+
+    // if (rol === 'ADMIN') this.id_rol = 1;
+
+  if (rol === 'ABOGADA') this.id_rol = 2;
+  if (rol === 'CLIENTE') this.id_rol = 3;
+}
   addUser() {
     //validare que el usuario ingrese valores
     if (this.email == '' || this.password == '' || this.confirmPassword == '') {
@@ -53,6 +63,8 @@ export class SignInComponent {
       email: this.email,
       password: this.password,
       repeatPassword: this.confirmPassword, // ✅ necesario para el backend
+      id_rol: this.id_rol   // 🔹 rol asignado automáticamente
+
     };
     console.log('Usuario a enviar:', user);
     // Activar el spinner de carga

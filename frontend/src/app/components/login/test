@@ -25,8 +25,6 @@ export class LoginComponent {
     email: string = '';
   password: string = '';
     loading: boolean = false;
-      userId?: number;
-
 
   constructor(
     private toastr: ToastrService,
@@ -48,27 +46,34 @@ export class LoginComponent {
     this.loading=  true;
 
       this._userService.login(user).subscribe({
-    next: (res: any) => {
-      this.loading = false;
+    next: (res: any) =>{
+         this.authService.login(res.token, res.user.rol); //  aquí guardamos el rol
+         
+    //  Guardar userId para el cambio de contraseña
+    localStorage.setItem('userId', res.user.id);
 
-      // Cliente obligado a cambiar contraseña
-      if (res.requiereCambio) {
-        // localStorage.setItem('userId', res.userId);
-              localStorage.setItem('userId', res.user.id);
 
-        
-        this.router.navigate(['/change-password']);
-        return;
-      }
+    // Redirección según requiera cambio de contraseña
+       if (res.user.requiere_cambio_password) {
+              localStorage.setItem('userId', res.userId);
 
-      // Login normal (admin o abogada)
-      this.authService.login(res.token, res.user.rol);
-      localStorage.setItem('userId', res.user.id);
-      this.router.navigate(['/dashboard']);
+      this.router.navigate(['/change-password']); // cliente obligado
+    } else {
+      this.router.navigate(['/dashboard']); // admin o abogada
+    }
+            // localStorage.setItem('token',res.token );
+      // this.router.navigate(['/dashboard'])
+   console.log(res.token);
+
     },
     error: (e: HttpErrorResponse) => {
-      this.loading = false;
-      this._errorService.msjError(e);
+        // Si ocurre un error
+        this._errorService.msjError(e);
+        this.loading = false;
+      }
+
+      })
+
     }
-  });
-}}
+    
+}

@@ -99,3 +99,8 @@ https://bootswatch.com/lumen/
 
 
 https://rxjs.dev/deprecations/subscribe-arguments
+
+
+AuthService  se crea como service para la lógica de autenticación y rol 
+
+Guard es un componente que decide si una ruta puede activarse o no    , Usa el Service para consultar el rol.

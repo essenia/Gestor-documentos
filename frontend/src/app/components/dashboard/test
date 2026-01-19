@@ -1,0 +1,24 @@
+
+<!-- ADMIN -->
+<!-- <div *ngIf="rolUsuario === 'ADMIN'">
+  <h4>Administración</h4>
+  <button class="btn btn-primary me-2" [routerLink]="['/sign']" [queryParams]="{ rol: 'ABOGADA' }">
+    Crear Abogada
+  </button>
+  <button class="btn btn-secondary" [routerLink]="['/sign']" [queryParams]="{ rol: 'CLIENTE' }">
+    Crear Cliente
+  </button>
+</div> -->
+
+<!-- ABOGADA -->
+<!-- <div *ngIf="rolUsuario === 'ABOGADA'">
+  <h4>Gestión</h4>
+  <button class="btn btn-primary" [routerLink]="['/sign']" [queryParams]="{ rol: 'CLIENTE' }">
+    Crear Cliente
+  </button>
+</div> -->
+
+<!-- CLIENTE -->
+<!-- <div *ngIf="rolUsuario === 'CLIENTE'">
+  <p>Bienvenido a tu panel</p>
+</div> -->
