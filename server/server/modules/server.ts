@@ -4,6 +4,7 @@ import usersRoutes from "./users/users.routes";
 import cors from "cors";
 import authRoutes from "./auth/auth.routes";
 import db from "./db/connection";
+import clienteRoutes from "./cliente/cliente.routes";
 
 
 class Server {
@@ -36,6 +37,10 @@ class Server {
     this.app.use("/api/roles", rolesRoutes);
     this.app.use("/api/users", usersRoutes);
     this.app.use('/api/auth', authRoutes);
+    this.app.use('/api/clientes', clienteRoutes);
+        this.app.use('/api/clientes', clienteRoutes);
+
+
 
   }
   midlewares() {

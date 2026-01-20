@@ -52,7 +52,7 @@ export const login = async (req: Request, res: Response) => {
 
 
     if (requiereCambio) {
-      return res.status(403).json({
+      return res.status(200).json({
         message: "Debe cambiar su contraseña",
         requiereCambio: true,
         userId: user.getDataValue("id"),

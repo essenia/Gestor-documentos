@@ -2,6 +2,7 @@
 
 import { Router } from 'express';
 import { login, changePassword } from './auth.controller';
+import { validateJWT } from '../../middlewares/validate-jwt';
 
 const router = Router();
 
@@ -11,6 +12,6 @@ router.post('/login', login);
 
 // CAMBIO DE CONTRASEÑA (CLIENTE)
 // POST /api/auth/change-password
-router.post('/change-password', changePassword);
+router.post('/change-password',changePassword);
 
 export default router;
