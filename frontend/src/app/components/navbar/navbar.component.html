@@ -5,7 +5,6 @@
 
     <div class="d-flex gap-2">
 
-      <!-- ADMIN -->
       <ng-container *ngIf="rolUsuario === 'ADMIN'">
         <a class="btn btn-outline-primary" [routerLink]="['/sign']" [queryParams]="{ rol: 'ABOGADA' }">
           Nueva Abogada
@@ -15,21 +14,19 @@
         </a>
       </ng-container>
 
-      <!-- ABOGADA -->
       <ng-container *ngIf="rolUsuario === 'ABOGADA'">
         <a class="btn btn-outline-primary" [routerLink]="['/sign']" [queryParams]="{ rol: 'CLIENTE' }">
           Nuevo Cliente
         </a>
       </ng-container>
 
-      <!-- CLIENTE -->
       <ng-container *ngIf="rolUsuario === 'CLIENTE'">
         <span class="navbar-text">Cliente</span>
       </ng-container>
 
-      <!-- Logout -->
       <button class="btn btn-outline-danger" (click)="logout()">Logout</button>
 
     </div>
   </div>
 </nav>
+

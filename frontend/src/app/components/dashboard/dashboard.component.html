@@ -1,4 +1,103 @@
 <app-navbar></app-navbar>
 
-<h2>Dashboard</h2>
+<div class="container mt-4">
 
+  <!-- Saludo al Admin -->
+  <div class="mb-4">
+    <h2>Bienvenido, Admin</h2>
+    <p class="text-muted">Resumen general de la aplicación</p>
+  </div>
+
+  <!-- Estadísticas principales -->
+ <div class="row g-4 mb-4">
+    <div class="col-md-3">
+      <div class="card shadow-sm text-center p-3 bg-primary text-white">
+        <h5>Total Clientes</h5>
+        <p class="display-6">{{ totalClientes }}</p>
+      </div>
+    </div>
+        <div class="col-md-3">
+      <div class="card shadow-sm text-center p-3 bg-success text-white">
+        <h5>Total Abogadas</h5>
+        <p class="display-6">{{ totalAbogadas }}</p>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card shadow-sm text-center p-3 bg-warning text-dark">
+        <h5>Casos Activos</h5>
+        <p class="display-6">{{ casosActivos }}</p>
+      </div>
+    </div>
+   <div class="col-md-3">
+      <div class="card shadow-sm text-center p-3 bg-info text-white">
+        <h5>Clientes Nuevos</h5>
+        <p class="display-6">{{ nuevosClientes }}</p>
+      </div>
+    </div>
+  
+  </div>
+
+  <!-- Acciones rápidas del Admin -->
+  <div class="mb-4">
+    <h4>Acciones rápidas</h4>
+    <div class="d-flex gap-3 flex-wrap">
+      <a class="btn btn-primary" [routerLink]="['/sign']" [queryParams]="{ rol: 'ABOGADA' }">
+        Nueva Abogada
+      </a>
+      <a class="btn btn-secondary" [routerLink]="['/sign']" [queryParams]="{ rol: 'CLIENTE' }">
+        Nuevo Cliente
+      </a>
+      <a class="btn btn-success" routerLink="/clientes">
+        Ver Clientes
+      </a>
+      <a class="btn btn-info" routerLink="/abogadas">
+        Ver Abogadas
+      </a>
+      <a class="btn btn-warning" routerLink="/casos">
+        Ver Casos
+      </a>
+    </div>
+  </div>
+
+  <!-- Últimos registros -->
+  <div class="row g-4">
+    <div class="col-md-6">
+      <div class="card shadow-sm p-3">
+        <h5>Últimos Clientes</h5>
+         <ul class="list-group list-group-flush">
+          <li class="list-group-item" *ngFor="let cliente of ultimosClientes">
+            {{ cliente.nombre }} {{ cliente.apellido }}
+            <span *ngIf="cliente.dni"> - DNI: {{ cliente.dni }}</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card shadow-sm p-3">
+        <h5>Últimas Abogadas</h5>
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item" *ngFor="let abogada of ultimasAbogadas">
+            {{ abogada.nombre }} {{ abogada.apellido }}
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Espacio para futuros gráficos -->
+  <div class="row g-4 mt-4">
+    <div class="col-md-6">
+      <div class="card shadow-sm p-3">
+        <h5>Clientes por Abogada</h5>
+        <div class="text-center text-muted py-5">[Gráfico pendiente]</div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card shadow-sm p-3">
+        <h5>Casos por Estado</h5>
+        <div class="text-center text-muted py-5">[Gráfico pendiente]</div>
+      </div>
+    </div>
+  </div>
+
+</div>

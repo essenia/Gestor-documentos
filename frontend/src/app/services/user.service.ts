@@ -37,6 +37,10 @@ export class UserService {
 
   // }
 
+//// obtiene todos los usuarios
+    getUsers() {
+    return this.http.get<any[]>(`${this.myAppUrl}${this.myApiUrl}`); 
+  }
   signIn(user: User):Observable<any>{
    return this.http.post<any>(`${this.myAppUrl}${this.myApiUrl}`, user);
     

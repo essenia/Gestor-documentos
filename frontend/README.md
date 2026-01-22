@@ -104,3 +104,44 @@ https://rxjs.dev/deprecations/subscribe-arguments
 AuthService  se crea como service para la lógica de autenticación y rol 
 
 Guard es un componente que decide si una ruta puede activarse o no    , Usa el Service para consultar el rol.
+
+
+tuve un erro en frontend no pude ejecutarlo , habrá algo roto en ele la carpeta node_module  y suele pasa esto en 
+angular 
+error de parallel-worker.js
+
+tuve que crear otra carpeta dentro C
+
+rmdir /s /q node_modules
+del package-lock.json
+npm cache clean --force
+npm install
+
+
+http://localhost:3000/api/clientes
+
+
+http://localhost:3000/api/users
+
+
+
+{
+  "email": "usuario3@test.com",
+  "password": "123456",
+  "repeatPassword": "123456",
+  "id_rol": 3
+}
+
+{
+  "id_usuario": 63,
+  "nombre": "Raoua",
+  "apellido": "Ben",
+  "dni": "12345678",
+  "tipo_dni": "DNI",
+  "telefono": "555-1234",
+  "direccion": "Calle Principal 123",
+  "notas_internas": "Cliente de prueba"
+}
+
+
+http://localhost:4200/clientes/editar/2

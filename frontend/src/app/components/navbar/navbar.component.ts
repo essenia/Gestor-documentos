@@ -22,7 +22,7 @@ export class NavbarComponent implements OnInit {
 
 
    ngOnInit(): void {
-    this.rolUsuario = this.auth.getRol(); // 🔹 Aquí obtenemos el rol
+    this.rolUsuario = this.auth.getRol(); //  Aquí obtenemos el rol
   }
   logout() {
     localStorage.clear(); // borra token y rol

@@ -1,0 +1,130 @@
+<div class="container mt-4">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title mb-3">
+            {{ isEdit ? 'Editar Cliente' : 'Crear Cliente' }}
+          </h5>
+
+          <app-spinner *ngIf="loading"></app-spinner>
+
+          <form *ngIf="!loading" (ngSubmit)="guardarCliente()" #form="ngForm">
+
+            <div class="row">
+
+              <!-- ID USUARIO -->
+              <div class="col-md-6 mb-3">
+                <label class="form-label">ID Usuario</label>
+                <input
+                  type="number"
+                  class="form-control"
+                  [(ngModel)]="cliente.id_usuario"
+                  name="id_usuario"
+                  required
+                  [readonly]="isEdit"
+                />
+              </div>
+
+              <!-- TIPO DNI -->
+              <div class="col-md-6 mb-3">
+                <label class="form-label">Tipo DNI</label>
+                <select
+                  class="form-select"
+                  [(ngModel)]="cliente.tipo_dni"
+                  name="tipo_dni">
+                  <option value="DNI">DNI</option>
+                  <option value="Pasaporte">Pasaporte</option>
+                </select>
+              </div>
+
+              <!-- NOMBRE -->
+              <div class="col-md-6 mb-3">
+                <label class="form-label">Nombre</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  [(ngModel)]="cliente.nombre"
+                  name="nombre"
+                  required
+                />
+              </div>
+
+              <!-- APELLIDO -->
+              <div class="col-md-6 mb-3">
+                <label class="form-label">Apellido</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  [(ngModel)]="cliente.apellido"
+                  name="apellido"
+                  required
+                />
+              </div>
+
+              <!-- DNI -->
+              <div class="col-md-6 mb-3">
+                <label class="form-label">DNI</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  [(ngModel)]="cliente.dni"
+                  name="dni"
+                  required
+                />
+              </div>
+   <!-- TELÉFONO -->
+              <div class="col-md-6 mb-3">
+                <label class="form-label">Teléfono</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  [(ngModel)]="cliente.telefono"
+                  name="telefono"
+                  placeholder="+34 600 000 000"
+                />
+              </div>
+              <!-- DIRECCIÓN -->
+              <div class="col-md-6 mb-3">
+                <label class="form-label">Dirección</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  [(ngModel)]="cliente.direccion"
+                  name="direccion"
+                />
+              </div>
+
+              <!-- NOTAS -->
+              <div class="col-12 mb-3">
+                <label class="form-label">Notas internas</label>
+                <textarea
+                  rows="2"
+                  class="form-control"
+                  [(ngModel)]="cliente.notas_internas"
+                  name="notas_internas">
+                </textarea>
+              </div>
+
+            </div>
+
+            <!-- BOTÓN -->
+<div class="d-flex justify-content-end gap-2">
+              <button class="btn btn-primary">
+                {{ isEdit ? 'Actualizar' : 'Crear' }}
+              </button>
+
+                <button  class="btn btn-primary" routerLink="/clientes">
+                  
+    Volver 
+  </button>
+            </div>
+
+          </form>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

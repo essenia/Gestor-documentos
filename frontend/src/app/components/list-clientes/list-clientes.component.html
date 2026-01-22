@@ -1,0 +1,89 @@
+<div class="container mt-4">
+  <h5 class="mb-3">Lista de Clientes</h5>
+
+  <!-- Botón Agregar Cliente -->
+  <div class="d-flex justify-content-end mb-3">
+    <button class="btn btn-success" (click)="router.navigate(['/clientes/add'])">
+      <i class="fas fa-plus"></i> Agregar Cliente
+    </button>
+  </div>
+
+  <!-- Spinner mientras carga -->
+  <div *ngIf="loading" class="text-center my-3">
+    <div class="spinner-border text-primary"></div>
+  </div>
+
+  <!-- Tabla de clientes -->
+  <div class="table-responsive" *ngIf="!loading && paginatedClientes.length">
+    <table class="table table-sm table-bordered table-striped text-center align-middle">
+      <thead class="table-light">
+        <tr>
+          <th>ID</th>
+          <th>ID Usuario</th>
+          <th>Nombre</th>
+          <th>Apellido</th>
+          <th>DNI</th>
+          <th>Tipo DNI</th>
+          <th>Teléfono</th>
+          <th>Dirección</th>
+          <th>Notas</th>
+          <th>Activo</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let cliente of paginatedClientes">
+          <td>{{ cliente.id }}</td>
+          <td>{{ cliente.id_usuario }}</td>
+          <td>{{ cliente.nombre }}</td>
+          <td>{{ cliente.apellido }}</td>
+          <td>{{ cliente.dni }}</td>
+          <td>{{ cliente.tipo_dni }}</td>
+          <td>{{ cliente.telefono }}</td>
+          <td>{{ cliente.direccion }}</td>
+          <td>{{ cliente.notas_internas }}</td>
+          <td>{{ cliente.activo ? 'Sí' : 'No' }}</td>
+          <td>
+            <div class="d-flex justify-content-center gap-1">
+              <button class="btn btn-info btn-sm" title="Ver Cliente" (click)="viewCliente(cliente)">
+                <i class="fas fa-eye"></i>
+              </button>
+              <button class="btn btn-warning btn-sm" title="Editar Cliente" (click)="router.navigate(['/clientes/editar', cliente.id])">
+                <i class="fas fa-edit"></i>
+              </button>
+              <button class="btn btn-danger btn-sm" title="Eliminar Cliente" >
+                <i class="fas fa-trash-alt"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Mensaje si no hay clientes -->
+  <div *ngIf="!loading && !clientes.length" class="text-center mt-3">
+    No hay clientes registrados
+  </div>
+
+  <!-- Paginación -->
+  <nav *ngIf="totalPages > 1">
+    <ul class="pagination justify-content-center mt-3">
+      <li class="page-item" [class.disabled]="currentPage === 1">
+        <a class="page-link" href="#" (click)="$event.preventDefault(); prevPage($event)">
+          <i class="fas fa-chevron-left"></i> Previous
+        </a>
+      </li>
+
+      <li class="page-item" *ngFor="let page of pages" [class.active]="page === currentPage">
+        <a class="page-link" href="#" (click)="$event.preventDefault(); goToPage(page, $event)">{{ page }}</a>
+      </li>
+
+      <li class="page-item" [class.disabled]="currentPage === totalPages">
+        <a class="page-link" href="#" (click)="$event.preventDefault(); nextPage($event)">
+          Next <i class="fas fa-chevron-right"></i>
+        </a>
+      </li>
+    </ul>
+  </nav>
+</div>
