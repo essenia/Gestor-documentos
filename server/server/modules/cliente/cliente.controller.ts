@@ -127,3 +127,22 @@ export const actualizarCliente = async (req: Request, res: Response) => {
     res.status(500).json({ error: 'Error al actualizar cliente' });
   }
 };
+
+export const getUltimosClientes = async (req :Request, res: Response) => {
+   try {
+    // Trae los últimos 5 clientes, incluyendo los datos del usuario relacionado
+    const clientes = await Cliente.findAll({
+      include: [{
+        model: User,
+        attributes: ['id', 'nombre', 'apellido', 'rol'] // solo campos que necesites
+      }],
+      order: [['id', 'DESC']],  // puedes usar 'id' si no tienes createdAt
+      limit: 5
+    });
+
+    res.json(clientes);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error al obtener últimos clientes' });
+  }
+};

@@ -54,7 +54,10 @@ await User.create({
     requiere_cambio_password: requiereCambioPassword,
     activo: true
 });
-res.sendStatus(201);
+    // return  res.sendStatus(201);
+     res.status(201).json({
+      msg: 'Usuario creado correctamente'
+    });
  } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Error al crear usuario' });
