@@ -1,42 +1,94 @@
 <div class="container mt-4">
   <h5 class="mb-3">Lista de Clientes</h5>
 
-
-  <!-- Botón Buscador -->
-<div class="input-group input-group-sm mb-3" style="max-width: 300px">
-  <span class="input-group-text">
-    <i class="fas fa-search"></i>
-  </span>
-  <input
-    type="text"
-    class="form-control"
-    placeholder="Buscar..."
-    [(ngModel)]="textoBuscar"
-    (input)="buscarClientes()"
-  />
-</div>
-
-
-<!-- 
-  Botón Agregar Cliente -->
-  <div class="d-flex justify-content-end mb-3">
-    <button class="btn btn-success" (click)="router.navigate(['/clientes/add'])">
-      <i class="fas fa-plus"></i> Agregar Cliente
+  <!-- Botón Filtrar -->
+  <div class="d-flex justify-content-start mb-3">
+    <button class="btn btn-outline-primary btn-sm" (click)="mostrarFiltros = !mostrarFiltros">
+      <i class="fas fa-filter me-1"></i> Filtros
     </button>
   </div>
 
-  <!-- Spinner mientras carga -->
+  <!-- Panel de filtros -->
+  <div *ngIf="mostrarFiltros" class="card shadow-sm mb-3 p-3">
+    <div class="row g-3 align-items-end">
+      <!-- Nombre -->
+      <div class="col-12 col-md-4">
+        <label class="form-label small text-muted">
+          <i class="fas fa-user me-1"></i> Nombre
+        </label>
+        <input type="text" class="form-control form-control-sm"
+          placeholder="Buscar por nombre..." [(ngModel)]="filtro.nombre" (input)="filtrarClientes()" />
+      </div>
+
+      <!-- Apellido -->
+      <div class="col-12 col-md-4">
+        <label class="form-label small text-muted">
+          <i class="fas fa-user-tag me-1"></i> Apellido
+        </label>
+        <input type="text" class="form-control form-control-sm"
+          placeholder="Buscar por apellido..." [(ngModel)]="filtro.apellido" (input)="filtrarClientes()" />
+      </div>
+      
+      <!-- DNI -->
+<div class="col-12 col-md-2">
+  <label class="form-label small text-muted">
+    <i class="fas fa-id-card me-1"></i> DNI
+  </label>
+  <input type="text" class="form-control form-control-sm"
+    placeholder="Buscar por DNI..." [(ngModel)]="filtro.dni" (input)="filtrarClientes()" />
+</div>
+
+
+
+      <!-- Activo -->
+      <div class="col-12 col-md-2">
+        <label class="form-label small text-muted">
+          <i class="fas fa-check-circle me-1"></i> Activo
+        </label>
+        <select class="form-select form-select-sm" [(ngModel)]="filtro.activo" (change)="filtrarClientes()">
+          <option value="">Todos</option>
+          <option [value]="true">Sí</option>
+          <option [value]="false">No</option>
+        </select>
+      </div>
+
+      <!-- Limpiar filtros -->
+      <div class="col-12 col-md-2 text-md-end">
+        <button class="btn btn-outline-secondary btn-sm w-100 w-md-auto" (click)="limpiarFiltros()">
+          <i class="fas fa-times me-1"></i> Limpiar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Buscador rápido + Agregar Cliente -->
+  <div class="row mb-3 g-2 align-items-center">
+    <div class="col-12 col-md-6">
+      <div class="input-group input-group-sm w-100">
+        <span class="input-group-text"><i class="fas fa-search"></i></span>
+        <input type="text" class="form-control" placeholder="Buscar rápido..."
+          [(ngModel)]="textoBuscar" (input)="buscarClientes()" />
+      </div>
+    </div>
+
+    <div class="col-12 col-md-6 text-md-end">
+      <button class="btn btn-info btn-sm w-80 w-md-auto" (click)="router.navigate(['/clientes/add'])">
+        <i class="fas fa-plus me-1"></i> Agregar Cliente
+      </button>
+    </div>
+  </div>
+
+  <!-- Spinner -->
   <div *ngIf="loading" class="text-center my-3">
     <div class="spinner-border text-primary"></div>
   </div>
 
   <!-- Tabla de clientes -->
   <div class="table-responsive" *ngIf="!loading && paginatedClientes.length">
-    <table class="table table-sm table-bordered table-striped text-center align-middle">
+    <table class="table table-hover table-bordered table-striped align-middle text-center">
       <thead class="table-light">
         <tr>
           <th>ID</th>
-          <!-- <th>ID Usuario</th> -->
           <th>Nombre</th>
           <th>Apellido</th>
           <th>DNI</th>
@@ -51,7 +103,6 @@
       <tbody>
         <tr *ngFor="let cliente of paginatedClientes">
           <td>{{ cliente.id }}</td>
-          <!-- <td>{{ cliente.id_usuario }}</td> -->
           <td>{{ cliente.nombre }}</td>
           <td>{{ cliente.apellido }}</td>
           <td>{{ cliente.dni }}</td>
@@ -61,14 +112,15 @@
           <td>{{ cliente.notas_internas }}</td>
           <td>{{ cliente.activo ? 'Sí' : 'No' }}</td>
           <td>
-            <div class="d-flex justify-content-center gap-1">
-              <button class="btn btn-info btn-sm" title="Ver Cliente" (click)="viewCliente(cliente)">
+            <div class="d-flex flex-column flex-sm-row gap-1 align-items-center">
+              <button class="btn btn-info btn-sm w-100 w-sm-auto" title="Ver Cliente" (click)="viewCliente(cliente)">
                 <i class="fas fa-eye"></i>
               </button>
-              <button class="btn btn-warning btn-sm" title="Editar Cliente" (click)="router.navigate(['/clientes/editar', cliente.id])">
+              <button class="btn btn-warning btn-sm w-100 w-sm-auto" title="Editar Cliente"
+                (click)="router.navigate(['/clientes/editar', cliente.id])">
                 <i class="fas fa-edit"></i>
               </button>
-              <button class="btn btn-danger btn-sm" title="Eliminar Cliente" >
+              <button class="btn btn-danger btn-sm w-100 w-sm-auto" title="Eliminar Cliente">
                 <i class="fas fa-trash-alt"></i>
               </button>
             </div>
@@ -79,13 +131,13 @@
   </div>
 
   <!-- Mensaje si no hay clientes -->
-  <div *ngIf="!loading && !clientes.length" class="text-center mt-3">
-    No hay clientes registrados
+  <div *ngIf="!loading && !clientesFiltrados.length" class="text-center mt-3 text-muted">
+    No se encontraron clientes
   </div>
 
   <!-- Paginación -->
   <nav *ngIf="totalPages > 1">
-    <ul class="pagination justify-content-center mt-3">
+    <ul class="pagination pagination-sm justify-content-center mt-3 flex-wrap">
       <li class="page-item" [class.disabled]="currentPage === 1">
         <a class="page-link" href="#" (click)="$event.preventDefault(); prevPage($event)">
           <i class="fas fa-chevron-left"></i> Previous
@@ -93,7 +145,9 @@
       </li>
 
       <li class="page-item" *ngFor="let page of pages" [class.active]="page === currentPage">
-        <a class="page-link" href="#" (click)="$event.preventDefault(); goToPage(page, $event)">{{ page }}</a>
+        <a class="page-link" href="#" (click)="$event.preventDefault(); goToPage(page, $event)">
+          {{ page }}
+        </a>
       </li>
 
       <li class="page-item" [class.disabled]="currentPage === totalPages">

@@ -22,6 +22,16 @@ textoBuscar: string = '';
   paginatedClientes: Cliente[] = [];
   loading: boolean = false;
 
+
+  mostrarFiltros: boolean = false;
+
+filtro = {
+  nombre: '',
+  apellido: '',
+    dni: '',
+
+  activo: ''
+};
   // Paginación simple
   currentPage: number = 1;
   pageSize: number = 10;
@@ -113,6 +123,33 @@ textoBuscar: string = '';
     // Aquí podrías abrir un modal o redirigir a detalle
     this.toastr.info(`Cliente: ${cliente.nombre} ${cliente.apellido}`);
   }
+
+filtrarClientes(): void {
+  this.clientesFiltrados = this.clientes.filter(c => {
+    const nombreMatch = c.nombre?.toLowerCase().includes(this.filtro.nombre.toLowerCase());
+    const apellidoMatch = c.apellido?.toLowerCase().includes(this.filtro.apellido.toLowerCase());
+    const dniMatch = c.dni?.toLowerCase().includes(this.filtro.dni.toLowerCase());
+
+    let activoMatch = true;
+    if (this.filtro.activo === 'true') activoMatch = c.activo === true;
+    else if (this.filtro.activo === 'false') activoMatch = c.activo === false;
+
+    return nombreMatch && apellidoMatch && dniMatch && activoMatch;
+  });
+
+  this.currentPage = 1;
+  this.updatePagination();
+}
+
+
+
+limpiarFiltros(): void {
+  this.filtro = { nombre: '', apellido: '', dni: '', activo: '' };
+  this.clientesFiltrados = [...this.clientes];
+  this.currentPage = 1;
+  this.updatePagination();
+}
+
 
   //  deleteCliente(cliente: Cliente) {
   //   if (!confirm(`¿Eliminar al cliente ${cliente.nombre} ${cliente.apellido}?`)) return;
