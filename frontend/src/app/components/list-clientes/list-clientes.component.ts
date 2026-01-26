@@ -15,6 +15,9 @@ import { HttpErrorResponse } from '@angular/common/http';
 })
 export class ListClientesComponent implements OnInit  {
 
+clientesFiltrados: Cliente[] = [];
+textoBuscar: string = '';
+
    clientes: Cliente[] = [];
   paginatedClientes: Cliente[] = [];
   loading: boolean = false;
@@ -39,7 +42,12 @@ export class ListClientesComponent implements OnInit  {
     this.clienteService.getClientes().subscribe({
       next: (res: Cliente[]) => {
         this.clientes = res;
-        this.totalPages = Math.ceil(this.clientes.length / this.pageSize);
+        this.clientesFiltrados = [...res]; 
+
+        // this.totalPages = Math.ceil(this.clientes.length / this.pageSize);
+              this.totalPages = Math.ceil(this.clientesFiltrados.length / this.pageSize);
+               this.currentPage = 1;
+
         this.updatePagination();
         this.loading = false;
       },
@@ -52,7 +60,9 @@ export class ListClientesComponent implements OnInit  {
  updatePagination(): void {
     const start = (this.currentPage - 1) * this.pageSize;
     const end = start + this.pageSize;
-    this.paginatedClientes = this.clientes.slice(start, end);
+    // this.paginatedClientes = this.clientes.slice(start, end);
+      this.paginatedClientes = this.clientesFiltrados.slice(start, end);
+  this.totalPages = Math.ceil(this.clientesFiltrados.length / this.pageSize);
     this.pages = Array.from({ length: this.totalPages }, (_, i) => i + 1);
   }
  goToPage(page: number, event: Event) {
@@ -75,6 +85,25 @@ export class ListClientesComponent implements OnInit  {
       this.updatePagination();
     }
   }
+
+  //Buscador 
+
+  buscarClientes(): void {
+  const texto = this.textoBuscar.trim().toLowerCase();
+
+  if (!texto) {
+    this.clientesFiltrados = [...this.clientes];
+  } else {
+    this.clientesFiltrados = this.clientes.filter(cliente =>
+      cliente.nombre?.toLowerCase().includes(texto) ||
+      cliente.apellido?.toLowerCase().includes(texto) ||
+      cliente.dni?.toLowerCase().includes(texto)
+    );
+  }
+
+  this.currentPage = 1;
+  this.updatePagination();
+}
 
   editCliente(cliente: Cliente) {
     this.router.navigate(['/clientes/add-edit-cliente', cliente.id]);

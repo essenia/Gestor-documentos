@@ -1,7 +1,24 @@
 <div class="container mt-4">
   <h5 class="mb-3">Lista de Clientes</h5>
 
-  <!-- Botón Agregar Cliente -->
+
+  <!-- Botón Buscador -->
+<div class="input-group input-group-sm mb-3" style="max-width: 300px">
+  <span class="input-group-text">
+    <i class="fas fa-search"></i>
+  </span>
+  <input
+    type="text"
+    class="form-control"
+    placeholder="Buscar..."
+    [(ngModel)]="textoBuscar"
+    (input)="buscarClientes()"
+  />
+</div>
+
+
+<!-- 
+  Botón Agregar Cliente -->
   <div class="d-flex justify-content-end mb-3">
     <button class="btn btn-success" (click)="router.navigate(['/clientes/add'])">
       <i class="fas fa-plus"></i> Agregar Cliente
@@ -19,7 +36,7 @@
       <thead class="table-light">
         <tr>
           <th>ID</th>
-          <th>ID Usuario</th>
+          <!-- <th>ID Usuario</th> -->
           <th>Nombre</th>
           <th>Apellido</th>
           <th>DNI</th>
@@ -34,7 +51,7 @@
       <tbody>
         <tr *ngFor="let cliente of paginatedClientes">
           <td>{{ cliente.id }}</td>
-          <td>{{ cliente.id_usuario }}</td>
+          <!-- <td>{{ cliente.id_usuario }}</td> -->
           <td>{{ cliente.nombre }}</td>
           <td>{{ cliente.apellido }}</td>
           <td>{{ cliente.dni }}</td>

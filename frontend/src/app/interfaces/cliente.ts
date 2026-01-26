@@ -1,6 +1,9 @@
+import { User } from './user';
+
+
 export interface Cliente {
   id?: number;
-  id_usuario: number;
+  id_usuario?: number;
   nombre: string;
   apellido: string;
   dni: string;
@@ -9,4 +12,6 @@ export interface Cliente {
   direccion?: string;
   notas_internas?: string;
   activo: boolean;
+    User?: User;
+
 }

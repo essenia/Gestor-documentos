@@ -1,4 +1,4 @@
-import { Component, OnInit, Input} from '@angular/core';
+ import { Component, OnInit, Input} from '@angular/core';
 
 
 import { ToastrService } from 'ngx-toastr';
@@ -11,6 +11,8 @@ import { ClientService } from '../../../services/client.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ErrorService } from '../../../services/error.service';
 import { SpinnerComponent } from '../../../shared/spinner/spinner.component';
+import { User } from '../../../interfaces/user';
+import { UserService } from '../../../services/user.service';
 
 
 @Component({
@@ -21,105 +23,27 @@ import { SpinnerComponent } from '../../../shared/spinner/spinner.component';
 })
 export class AddEditClienteComponent implements  OnInit {
 
-// @Input() clienteId?: number; // si existe, es edición
-// isEdit = false;
-//   loading = false;
-
-//  cliente: Cliente = {
-//     id_usuario: 0,
-//     nombre: '',
-//     apellido: '',
-//     dni: '',
-//     tipo_dni: 'DNI',
-//     activo: true
-//   };
 
 
-//    mensaje = '';
-//   error = '';
-//   constructor(private clienteService : ClientService, private router: Router, private toastr: ToastrService,
-//     private errorService: ErrorService) {}
 
-//    ngOnInit(): void {
-//     if (this.clienteId) {
-//       this.isEdit = true;
-//       this.cargarCliente();
-//     }
-//   }
-//   //  ngOnInit(): void {
-//   //   const id = this.route.snapshot.paramMap.get('id');
-//   //   if (id) {
-//   //     this.isEdit = true;
-//   //     this.cargarCliente(id);
-//   //   }
-//   // }
-//  cargarCliente() {
-//     this.loading = true;
+ cliente: Cliente = {
+   nombre: '',
+   apellido: '',
+   dni: '',
+   tipo_dni: 'DNI',
+   activo: true,
+   
+  
+ };
 
-//     this.clienteService.getClienteById(this.clienteId!)
-//       .subscribe({
-//         next: (res) => {
-//           this.loading = false;
-//           this.cliente = res;
-//         },
-//         error: (e: HttpErrorResponse) => {
-//           this.loading = false;
-//           this.errorService.msjError(e);
-//         }
-//       });
-//   }
+  usuario: User = {
+    email: '',
+    password: '',
+    repeatPassword: ''
+  };
+ 
 
-//   guardarCliente() {
-//     // validaciones básicas
-//     if (!this.cliente.nombre || !this.cliente.apellido || !this.cliente.dni) {
-//       this.toastr.error('Los campos obligatorios no pueden estar vacíos', 'Error');
-//       return;
-//     }
-
-//     this.loading = true;
-
-//     if (this.isEdit) {
-//       this.clienteService.actualizarCliente(this.clienteId!, this.cliente)
-//         .subscribe({
-//           next: () => {
-//             this.loading = false;
-//             this.toastr.success('Cliente actualizado correctamente', 'Éxito');
-//           },
-//           error: (e: HttpErrorResponse) => {
-//             this.loading = false;
-//             this.errorService.msjError(e);
-//           }
-//         });
-//     } else {
-//       this.clienteService.crearCliente(this.cliente)
-//         .subscribe({
-//           next: () => {
-//             this.loading = false;
-//             this.toastr.success('Cliente creado correctamente', 'Éxito');
-//             this.resetFormulario();
-//           },
-//           error: (e: HttpErrorResponse) => {
-//             this.loading = false;
-//             this.errorService.msjError(e);
-//           }
-//         });
-//     }
-//   }
-
-//   resetFormulario() {
-//     this.cliente = {
-//       id_usuario: 0,
-//       nombre: '',
-//       apellido: '',
-//       dni: '',
-//       tipo_dni: 'DNI',
-//       activo: true
-//     };
-//   }
-// }
-
-
-  cliente: any = {};
+  // cliente: any = {};
   isEdit: boolean = false;
   loading: boolean = false;
 
@@ -127,11 +51,22 @@ export class AddEditClienteComponent implements  OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private clienteService: ClientService,
+    private userService: UserService,
     private toastr: ToastrService,
     private errorService: ErrorService
   ) {}
 
-  ngOnInit(): void {
+
+
+  // ngOnInit(): void {
+  //   const id = this.route.snapshot.paramMap.get('id');
+  //   if (id) {
+  //     this.isEdit = true;
+  //     this.cargarCliente(+id);
+  //   }
+  // }
+
+   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
       this.isEdit = true;
@@ -139,15 +74,34 @@ export class AddEditClienteComponent implements  OnInit {
     }
   }
 
-  cargarCliente(id: number) {
+  // cargarCliente(id: number) {
+  //   this.loading = true;
+  //   this.clienteService.getClienteById(id).subscribe({
+  //     next: (res) => {
+  //       this.cliente = res;
+  //           // normalizar tipo_dni
+  //     if (this.cliente.tipo_dni) {
+  //       this.cliente.tipo_dni = this.cliente.tipo_dni.trim().toUpperCase();
+  //     }
+  //       this.loading = false;
+  //     },
+  //     error: (e: HttpErrorResponse) => {
+  //       this.loading = false;
+  //       this.errorService.msjError(e);
+  //     }
+  //   });
+  // }
+
+    cargarCliente(id: number) {
     this.loading = true;
     this.clienteService.getClienteById(id).subscribe({
       next: (res) => {
         this.cliente = res;
-            // normalizar tipo_dni
-      if (this.cliente.tipo_dni) {
-        this.cliente.tipo_dni = this.cliente.tipo_dni.trim().toUpperCase();
-      }
+      //     if (res.User) {
+      //   this.usuario.email = res.User.email;
+      //   this.cliente.id_usuario = res.User.id;
+      // }
+
         this.loading = false;
       },
       error: (e: HttpErrorResponse) => {
@@ -157,36 +111,96 @@ export class AddEditClienteComponent implements  OnInit {
     });
   }
 
-  guardarCliente() {
-    this.loading = true;
+//   guardarCliente() {
+//     this.loading = true;
 
-    if (this.isEdit) {
-      //  ACTUALIZAR
-      this.clienteService.actualizarCliente(this.cliente.id, this.cliente).subscribe({
-        next: () => {
-          this.loading = false;
-          this.toastr.success('Cliente actualizado correctamente');
-          this.router.navigate(['/clientes']);
-        },
-        error: (e: HttpErrorResponse) => {
-          this.loading = false;
-          this.errorService.msjError(e);
-        }
-      });
+//     if (this.isEdit) {
+//       //  ACTUALIZAR
+//       this.clienteService.actualizarCliente(this.cliente.id, this.cliente).subscribe({
+//         next: () => {
+//           this.loading = false;
+//           this.toastr.success('Cliente actualizado correctamente');
+//           this.router.navigate(['/clientes']);
+//         },
+//         error: (e: HttpErrorResponse) => {
+//           this.loading = false;
+//           this.errorService.msjError(e);
+//         }
+//       });
 
-    } else {
-      //  CREAR
-      this.clienteService.crearCliente(this.cliente).subscribe({
-        next: () => {
-          this.loading = false;
-          this.toastr.success('Cliente creado correctamente');
-          this.router.navigate(['/clientes']);
-        },
-        error: (e: HttpErrorResponse) => {
-          this.loading = false;
-          this.errorService.msjError(e);
-        }
-      });
-    }
+//     } else {
+//       //  CREAR
+//       this.clienteService.crearCliente(this.cliente).subscribe({
+//         next: () => {
+//           this.loading = false;
+//           this.toastr.success('Cliente creado correctamente');
+//           this.router.navigate(['/clientes']);
+//         },
+//         error: (e: HttpErrorResponse) => {
+//           this.loading = false;
+//           this.errorService.msjError(e);
+//         }
+//       });
+//     }
+//   }
+// }
+
+guardarCliente() {
+  // 1️⃣ Validar que las contraseñas coincidan (solo si estamos creando)
+  if (!this.isEdit && this.usuario.password !== this.usuario.repeatPassword) {
+    this.toastr.error('Las contraseñas no coinciden');
+    return;
   }
+
+  this.loading = true;
+
+  if (this.isEdit) {
+    // EDITAR CLIENTE
+    this.clienteService.actualizarCliente(this.cliente.id!, this.cliente).subscribe({
+      next: () => {
+        this.loading = false;
+        this.toastr.success('Cliente actualizado correctamente');
+        this.router.navigate(['/clientes']);
+      },
+      error: (e) => {
+        this.loading = false;
+        this.errorService.msjError(e);
+      }
+    });
+  } else {
+    // CREAR CLIENTE NUEVO
+
+    // 🔹 1. Asegurarse de que id_rol esté asignado
+    this.usuario.id_rol = 3; // 3 = CLIENTE
+
+    // 🔹 2. Crear usuario primero
+    this.userService.signIn(this.usuario).subscribe({
+      next: (resUsuario: any) => {
+            console.log('Usuario creado:', resUsuario); // debe mostrar { id: 80, email: ... }
+
+        // 🔹 3. Asignar id_usuario al cliente
+        this.cliente.id_usuario = resUsuario.id;
+
+
+    console.log('Cliente a enviar:', this.cliente); // Para verificar
+        // 🔹 4. Crear cliente
+        this.clienteService.crearCliente(this.cliente).subscribe({
+          next: () => {
+            this.loading = false;
+            this.toastr.success('Cliente y usuario creados correctamente');
+            this.router.navigate(['/clientes']);
+          },
+          error: (e) => {
+            this.loading = false;
+            this.errorService.msjError(e);
+          }
+        });
+      },
+      error: (e) => {
+        this.loading = false;
+        this.errorService.msjError(e);
+      }
+    });
+  }
+}
 }

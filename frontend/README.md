@@ -145,3 +145,5 @@ http://localhost:3000/api/users
 
 
 http://localhost:4200/clientes/editar/2
+
+http://localhost/phpmyadmin/index.php?route=/sql&pos=0&db=gestordocumentos&table=usuarios
