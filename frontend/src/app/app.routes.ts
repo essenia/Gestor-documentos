@@ -8,13 +8,26 @@ import { roleGuardGuard } from './guards/role-guard.guard';
 import { ListUsersComponent } from './components/list-users/list-users.component';
 import { AddEditClienteComponent } from './components/clientes/add-edit-cliente/add-edit-cliente.component';
 import { ListClientesComponent } from './components/list-clientes/list-clientes.component';
+import { PerfilComponent } from './components/pages/perfil/perfil.component';
+import { EditarPerfilComponent } from './components/pages/editar-perfil/editar-perfil.component';
+import { SubirFotoComponent } from './components/pages/subir-foto/subir-foto.component';
 
 export const routes: Routes = [
 
    { path: '', redirectTo: '/login', pathMatch: 'full' },
       // Dashboard público para todos logueados
-  { path: 'dashboard', component: DashboardComponent },
+  // { path: 'dashboard', component: DashboardComponent },
 
+  {
+  path: '',
+  component: NavbarComponent,
+  children: [
+    { path: 'perfil', component: PerfilComponent },
+    { path: 'perfil/editar', component: EditarPerfilComponent },
+    { path: 'perfil/foto', component: SubirFotoComponent }
+  ]
+},
+ 
 
 
   // ADMIN + ABOGADA
@@ -39,7 +52,8 @@ export const routes: Routes = [
     path: 'clientes/add',
 
     component: AddEditClienteComponent,
-    
+       canActivate: [roleGuardGuard],
+    data: { roles: ['ADMIN', 'ABOGADA'] }
     // canActivate: [roleGuardGuard],
     // data: { roles: ['ADMIN', 'ABOGADA'] }
   },
@@ -51,7 +65,15 @@ export const routes: Routes = [
     data: { roles: ['ABOGADA', 'ADMIN'] } // Solo estos roles pueden ver
   },
 
-    { path: 'clientes/editar/:id', component: AddEditClienteComponent },
+    { path: 'clientes/editar/:id', 
+      component: AddEditClienteComponent,
+         canActivate: [roleGuardGuard],
+    data: { roles: ['ADMIN', 'ABOGADA'] }
+     },
+
+
+  
+
 
     {path:'login', component:LoginComponent},
     {path:'signIn',component: SignInComponent},
@@ -60,6 +82,7 @@ export const routes: Routes = [
 
 
         {path:'**',redirectTo: '/login', pathMatch:'full'}
+
 
 
 ];

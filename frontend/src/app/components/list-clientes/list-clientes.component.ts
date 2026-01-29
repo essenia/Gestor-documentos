@@ -1,20 +1,25 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { ClientService } from '../../services/client.service';
 import { Cliente } from '../../interfaces/cliente';
-import { ToastrService } from 'ngx-toastr';
+import { ToastrService,ActiveToast } from 'ngx-toastr';
 
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
+import { NavbarComponent } from "../navbar/navbar.component";
 @Component({
   selector: 'app-list-clientes',
-  imports:  [CommonModule, RouterModule, FormsModule],
+  imports: [CommonModule, RouterModule, FormsModule],
   templateUrl: './list-clientes.component.html',
   styleUrl: './list-clientes.component.css'
 })
 export class ListClientesComponent implements OnInit  {
+showScrollButton = false;
+isAtBottom = false;
 
+  selectedCliente: Cliente | null = null;  // Cliente seleccionado
+mostrarModal: boolean = false; 
 clientesFiltrados: Cliente[] = [];
 textoBuscar: string = '';
 
@@ -67,6 +72,31 @@ filtro = {
       }
     });
   }
+@HostListener('window:scroll', [])
+
+  onWindowScroll() {
+  const scrollTop = window.scrollY;
+  const windowHeight = window.innerHeight;
+  const documentHeight = document.documentElement.scrollHeight;
+
+  this.showScrollButton = scrollTop > 100;
+
+  // Detecta si estás abajo del todo
+  this.isAtBottom = scrollTop + windowHeight >= documentHeight - 50;
+}
+
+
+scrollAction() {
+  if (this.isAtBottom) {
+    // subir
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  } else {
+    // bajar
+    window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+  }
+}
+
+
  updatePagination(): void {
     const start = (this.currentPage - 1) * this.pageSize;
     const end = start + this.pageSize;
@@ -119,11 +149,22 @@ filtro = {
     this.router.navigate(['/clientes/add-edit-cliente', cliente.id]);
   }
 
-  viewCliente(cliente: Cliente) {
-    // Aquí podrías abrir un modal o redirigir a detalle
-    this.toastr.info(`Cliente: ${cliente.nombre} ${cliente.apellido}`);
-  }
+  // viewCliente(cliente: Cliente) {
+  //   // Aquí podrías abrir un modal o redirigir a detalle
+  //   this.toastr.info(`Cliente: ${cliente.nombre} ${cliente.apellido}`);
+  // }
 
+  // Función para abrir el modal
+viewCliente(cliente: Cliente) {
+  this.selectedCliente = cliente;
+  this.mostrarModal = true;
+}
+
+// Función para cerrar el modal
+cerrarModal() {
+  this.mostrarModal = false;
+  this.selectedCliente = null;
+}
 filtrarClientes(): void {
   this.clientesFiltrados = this.clientes.filter(c => {
     const nombreMatch = c.nombre?.toLowerCase().includes(this.filtro.nombre.toLowerCase());
@@ -151,17 +192,35 @@ limpiarFiltros(): void {
 }
 
 
-  //  deleteCliente(cliente: Cliente) {
-  //   if (!confirm(`¿Eliminar al cliente ${cliente.nombre} ${cliente.apellido}?`)) return;
 
-  //   this.clienteService.deleteCliente(cliente.id!).subscribe({
-  //     next: () => {
-  //       this.toastr.success('Cliente eliminado');
-  //       this.getClientes();
-  //     },
-  //     error: (e: HttpErrorResponse) => {
-  //       this.toastr.error('Error al eliminar cliente');
-  //     }
-  //   });
-  // }
+volverInicio() {
+  this.router.navigate(['/navbar']);
+}
+
+
+deleteCliente(cliente: Cliente) {
+  // Confirmación nativa (evita problemas de sanitización)
+  const mensaje = `¿Deseas marcar como NO ACTIVO al cliente ${cliente.nombre} ${cliente.apellido}?`;
+  
+  if (confirm(mensaje)) {
+    // Llamada al backend
+    this.clienteService.desactivarCliente(cliente.id!).subscribe({
+      next: (res) => {
+        // Actualizar objeto cliente local
+        cliente.activo = false;
+
+        // Refrescar arrays para que Angular detecte el cambio
+        this.clientes = [...this.clientes];
+        this.filtrarClientes(); // refresca paginación y tabla
+
+        // Mensaje de éxito
+        this.toastr.success('Cliente marcado como no activo');
+      },
+      error: () => {
+        this.toastr.error('Error al marcar cliente como no activo');
+      }
+    });
+  }
+}
+
 }

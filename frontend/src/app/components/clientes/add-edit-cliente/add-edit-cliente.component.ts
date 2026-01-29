@@ -95,13 +95,18 @@ export class AddEditClienteComponent implements  OnInit {
     cargarCliente(id: number) {
     this.loading = true;
     this.clienteService.getClienteById(id).subscribe({
-      next: (res) => {
+      // next: (res) => {
+      //   this.cliente = res;
+    next: (res) => {
         this.cliente = res;
-      //     if (res.User) {
-      //   this.usuario.email = res.User.email;
-      //   this.cliente.id_usuario = res.User.id;
-      // }
-
+ if (res.usuario) {
+        this.usuario = {
+          id: res.usuario.id,
+          email: res.usuario.email,
+          password: '',
+          repeatPassword: ''
+        };
+      }
         this.loading = false;
       },
       error: (e: HttpErrorResponse) => {

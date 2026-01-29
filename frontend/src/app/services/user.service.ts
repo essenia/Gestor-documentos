@@ -37,6 +37,7 @@ export class UserService {
 
   // }
 
+
 //// obtiene todos los usuarios
     getUsers() {
     return this.http.get<any[]>(`${this.myAppUrl}${this.myApiUrl}`); 
@@ -46,9 +47,24 @@ export class UserService {
     
   }
 
-  login(user : User):Observable<string> {
-    return this.http.post<string>(`${this.myAppUrl}api/auth/login`, user);
-  }
+  // login(user : User):Observable<string> {
+  //   return this.http.post<string>(`${this.myAppUrl}api/auth/login`, user);
+  // }
+
+  login(user: User) {
+  return this.http.post<any>(`${this.myAppUrl}api/auth/login`, user).pipe(
+    tap(res => {
+      if (res && res.user) {
+        localStorage.setItem('email', res.user.email); // guardar email
+        localStorage.setItem('rol', res.user.id_rol?.toString() || ''); 
+      }
+      if (res && res.token) {
+        localStorage.setItem('token', res.token);
+      }
+    })
+  );
+}
+
 
  // Cambio de contraseña
  changePassword(userId: number, newPassword: string){

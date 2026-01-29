@@ -1,4 +1,11 @@
+   
 <div class="container mt-4">
+  <button
+    type="button"
+    class="btn btn-outline-primary btn-sm"
+    (click)="volverInicio()">
+    ← Volver al inicio
+  </button>
   <h5 class="mb-3">Lista de Clientes</h5>
 
   <!-- Botón Filtrar -->
@@ -101,7 +108,9 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let cliente of paginatedClientes">
+        <!-- <tr *ngFor="let cliente of paginatedClientes"> -->
+            <tr *ngFor="let cliente of paginatedClientes" [class.table-secondary]="!cliente.activo">
+
           <td>{{ cliente.id }}</td>
           <td>{{ cliente.nombre }}</td>
           <td>{{ cliente.apellido }}</td>
@@ -120,7 +129,7 @@
                 (click)="router.navigate(['/clientes/editar', cliente.id])">
                 <i class="fas fa-edit"></i>
               </button>
-              <button class="btn btn-danger btn-sm w-100 w-sm-auto" title="Eliminar Cliente">
+              <button class="btn btn-danger btn-sm w-100 w-sm-auto" title="Eliminar Cliente"  (click)="deleteCliente(cliente)">
                 <i class="fas fa-trash-alt"></i>
               </button>
             </div>
@@ -128,6 +137,41 @@
         </tr>
       </tbody>
     </table>
+
+
+
+    <div class="container mt-4">
+  <!-- Aquí va todo tu HTML actual: filtros, buscador, tabla, paginación -->
+
+  <!-- Modal Cliente -->
+  <div class="modal-backdrop fade show" *ngIf="mostrarModal"></div>
+  <div class="modal d-block" tabindex="-1" *ngIf="mostrarModal">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Detalles del Cliente</h5>
+          <button type="button" class="btn-close" (click)="cerrarModal()"></button>
+        </div>
+        <div class="modal-body" *ngIf="selectedCliente">
+          <div class="row">
+            <div class="col-md-6"><strong>Nombre:</strong> {{ selectedCliente.nombre }}</div>
+            <div class="col-md-6"><strong>Apellido:</strong> {{ selectedCliente.apellido }}</div>
+            <div class="col-md-6"><strong>DNI:</strong> {{ selectedCliente.dni }}</div>
+            <div class="col-md-6"><strong>Tipo DNI:</strong> {{ selectedCliente.tipo_dni }}</div>
+            <div class="col-md-6"><strong>Teléfono:</strong> {{ selectedCliente.telefono }}</div>
+            <div class="col-md-6"><strong>Activo:</strong> {{ selectedCliente.activo ? 'Sí' : 'No' }}</div>
+            <div class="col-12"><strong>Dirección:</strong> {{ selectedCliente.direccion }}</div>
+            <div class="col-12"><strong>Notas:</strong> {{ selectedCliente.notas_internas }}</div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary btn-sm" (click)="cerrarModal()">Cerrar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
   </div>
 
   <!-- Mensaje si no hay clientes -->
@@ -157,4 +201,18 @@
       </li>
     </ul>
   </nav>
+
+
 </div>
+
+<!-- Scroll Button -->
+<button
+  class="scroll-btn"
+  *ngIf="showScrollButton"
+  (click)="scrollAction()">
+
+  <i class="fas" [ngClass]="isAtBottom ? 'fa-arrow-up' : 'fa-arrow-down'"></i>
+
+</button>
+
+

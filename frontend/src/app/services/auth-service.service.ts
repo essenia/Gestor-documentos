@@ -26,4 +26,15 @@ login(token: string, rol: string) {
   localStorage.setItem('token', token);
   localStorage.setItem('rol', rol.toUpperCase()); // 🔹 convertimos a mayúsculas
 }
+
+  getUserId(): number {
+  const id = localStorage.getItem('userId');
+  return id ? +id : 0; // retorna 0 si no existe
+}
+
+getUserEmail(): string | null {
+  return localStorage.getItem('email');
+}
+
+
 }

@@ -19,6 +19,7 @@ export class ListUsersComponent implements OnInit  {
 
     users: any[] = [];
       paginatedUsers: any[] = [];  // Solo los usuarios que se muestran en la página actual
+usuarioSeleccionado: any = null;
 
   loading: boolean = false;
    // Paginación
@@ -26,7 +27,8 @@ export class ListUsersComponent implements OnInit  {
   pageSize: number = 10; // 10 usuarios por página
   totalPages: number = 1;
   pages: number[] = [];
-constructor (private userService: UserService, private toastr: ToastrService){
+constructor (private userService: UserService, private toastr: ToastrService, public router: Router
+){
 }
   ngOnInit() {
     this.fetchUsers();
@@ -54,6 +56,9 @@ fetchUsers() {
     const end = start + this.pageSize;
     this.paginatedUsers = this.users.slice(start, end);
   }
+  volverInicio() {
+  this.router.navigate(['/navbar']);
+}
   
   goToPage(page: number, event: Event) {
     event.preventDefault();
@@ -67,7 +72,16 @@ fetchUsers() {
     event.preventDefault();
     if (this.currentPage < this.totalPages) this.setPage(this.currentPage + 1);
   }
-   viewUser(user: any) { console.log('Ver usuario:', user); }
+
+  cerrarPanel() {
+  this.usuarioSeleccionado = null;
+}
+
+  //  viewUser(user: any) { console.log('Ver usuario:', user); }
+
+     viewUser(user: any) {
+    this.usuarioSeleccionado = user;
+  }
   editUser(user: any) { console.log('Editar usuario:', user); }
   deleteUser(user: any) { console.log('Eliminar usuario:', user); }
 }

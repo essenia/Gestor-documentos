@@ -17,6 +17,7 @@ import { SpinnerComponent } from '../../shared/spinner/spinner.component';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ErrorService } from '../../services/error.service';
 import { ActivatedRoute } from '@angular/router';
+import { NavbarComponent } from "../navbar/navbar.component";
 
 
 @Component({

@@ -1,32 +1,164 @@
-<nav class="navbar navbar-expand-lg bg-body-tertiary">
-  <div class="container-fluid">
 
-    <a class="navbar-brand" routerLink="/dashboard">Aplicación</a>
 
-    <div class="d-flex gap-2">
 
+
+ <div class="d-flex" id="wrapper">
+
+  <!-- 🟦 SIDEBAR -->
+  <div class="bg-white border-end" id="sidebar-wrapper" [class.d-none]="sidebarOculto">
+    <div class="sidebar-heading text-center py-4 fw-bold fs-5 border-bottom">
+      ⚖️ Sistema Legal
+    </div>
+
+    <div class="list-group list-group-flush my-3">
+
+      <!-- ADMIN -->
       <ng-container *ngIf="rolUsuario === 'ADMIN'">
-        <a class="btn btn-outline-primary" [routerLink]="['/sign']" [queryParams]="{ rol: 'ABOGADA' }">
-          Nueva Abogada
+        <a routerLink="/sign" [queryParams]="{ rol: 'CLIENTE' }"
+           class="list-group-item list-group-item-action bg-transparent">
+          ➕ Añadir Cliente
         </a>
-        <a class="btn btn-outline-secondary" [routerLink]="['/sign']" [queryParams]="{ rol: 'CLIENTE' }">
-          Nuevo Cliente
+
+        <a routerLink="/sign" [queryParams]="{ rol: 'ABOGADA' }"
+           class="list-group-item list-group-item-action bg-transparent">
+          ➕ Añadir Abogada
+        </a>
+
+        
+
+        <a routerLink="/clientes"
+           class="list-group-item list-group-item-action bg-transparent">
+          📋 Lista Clientes
+        </a>
+
+        <a routerLink="/listusers"
+           class="list-group-item list-group-item-action bg-transparent">
+          👥 Lista Usuarios
+        </a>
+           <a routerLink="/perfil"
+           class="list-group-item list-group-item-action bg-transparent">
+                  📁 Casos
+
+        </a>
+
+         <a routerLink="/perfil"
+           class="list-group-item list-group-item-action bg-transparent">
+          👤 Mi Perfil
+        </a>
+          <a routerLink="/perfil"
+           class="list-group-item list-group-item-action bg-transparent">
+          🔔 Notificaciones
         </a>
       </ng-container>
 
+      <!-- ABOGADA -->
       <ng-container *ngIf="rolUsuario === 'ABOGADA'">
-        <a class="btn btn-outline-primary" [routerLink]="['/sign']" [queryParams]="{ rol: 'CLIENTE' }">
-          Nuevo Cliente
+        <a routerLink="/clientes/add" [queryParams]="{ rol: 'CLIENTE' }"
+           class="list-group-item list-group-item-action bg-transparent">
+          ➕ Añadir Cliente
+        </a>
+
+        <a routerLink="/clientes"
+           class="list-group-item list-group-item-action bg-transparent">
+          📋  Clientes
+        </a>
+            <a routerLink="/perfil"
+           class="list-group-item list-group-item-action bg-transparent">
+                  📁 Casos
+
+        </a>
+
+         <a routerLink="/perfil"
+           class="list-group-item list-group-item-action bg-transparent">
+          👤 Mi Perfil
+        </a>
+          <a routerLink="/perfil"
+           class="list-group-item list-group-item-action bg-transparent">
+          🔔 Notificaciones
         </a>
       </ng-container>
 
+      <!-- CLIENTE -->
       <ng-container *ngIf="rolUsuario === 'CLIENTE'">
-        <span class="navbar-text">Cliente</span>
+        <a routerLink="/perfil"
+           class="list-group-item list-group-item-action bg-transparent">
+          👤 Mi Perfil
+        </a>
       </ng-container>
 
-      <button class="btn btn-outline-danger" (click)="logout()">Logout</button>
+      <a (click)="logout()" class="list-group-item list-group-item-action text-danger">
+        🚪 Logout
+      </a>
 
     </div>
   </div>
-</nav>
 
+  <!-- 🟩 CONTENIDO -->
+  <div id="page-content-wrapper" class="w-100">
+
+    <!-- 🔝 NAVBAR SUPERIOR -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom px-4">
+
+      <!-- ☰ HAMBURGUESA -->
+      <button class="btn btn-outline-secondary me-3" (click)="toggleSidebar()">
+        ☰
+      </button>
+
+      <span class="fw-bold">Panel de Control</span>
+
+      <div class="ms-auto d-flex align-items-center gap-3">
+
+        <!-- 🔔 NOTIFICACIONES -->
+        <div class="dropdown">
+          <button class="btn position-relative" data-bs-toggle="dropdown">
+            🔔
+            <span *ngIf="notificaciones > 0"
+              class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+              {{ notificaciones }}
+            </span>
+          </button>
+
+          <ul class="dropdown-menu dropdown-menu-end shadow">
+            <li class="dropdown-header">Notificaciones</li>
+            <li *ngFor="let n of listaNotificaciones">
+              <a class="dropdown-item small">{{ n }}</a>
+            </li>
+          </ul>
+        </div>
+
+        <!-- 👤 PERFIL -->
+<!-- 👤 PERFIL -->
+<div class="position-relative">
+  <button class="btn d-flex align-items-center" (click)="togglePerfil()">
+    <img [src]="fotoPerfil" class="rounded-circle me-2" width="35" height="35">
+    {{ nombreUsuario }}
+  </button>
+
+  <!-- Menú de perfil -->
+  <ul *ngIf="perfilAbierto" class="dropdown-menu dropdown-menu-end shadow show" style="display:block; position:absolute;">
+    <li>
+      <a routerLink="/perfil" class="dropdown-item">👤 Ver Perfil</a>
+    </li>
+    <li>
+      <a routerLink="/perfil/editar" class="dropdown-item">✏️ Modificar Datos</a>
+    </li>
+    <li>
+      <a routerLink="/perfil/foto" class="dropdown-item">📷 Subir Foto</a>
+    </li>
+    <li><hr class="dropdown-divider"></li>
+    <li>
+      <a (click)="logout()" class="dropdown-item text-danger">🚪 Logout</a>
+    </li>
+  </ul>
+</div>
+
+      </div>
+    </nav>
+
+    <!-- 📦 CONTENIDO DINÁMICO -->
+    <div class="container-fluid p-4">
+      <router-outlet></router-outlet>
+    </div>
+
+  </div>
+</div>

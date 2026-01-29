@@ -1,0 +1,31 @@
+#wrapper {
+  min-height: 100vh;
+}
+
+#sidebar-wrapper {
+  width: 250px;
+  transition: all 0.3s ease;
+}
+
+.list-group-item {
+  border: none;
+  padding: 15px 20px;
+  font-weight: 500;
+}
+
+.list-group-item:hover {
+  background-color: #f1f1f1;
+}
+
+img.rounded-circle {
+  object-fit: cover;
+}
+
+/* 📱 Responsive */
+@media (max-width: 768px) {
+  #sidebar-wrapper {
+    position: absolute;
+    z-index: 1000;
+    height: 100%;
+  }
+}

@@ -24,6 +24,8 @@ export class ClientService {
     return this.http.get<Cliente>(`${this.myAppUrl}${this.myApiUrl}${id}`);
   }
 
+
+ 
    //  Crear cliente
   crearCliente(cliente: Cliente): Observable<Cliente> {
     return this.http.post<Cliente>(
@@ -40,11 +42,24 @@ export class ClientService {
     );
   }
 
-  getUltimosClientes(): Observable<Cliente[]> {
-  return this.http.get<Cliente[]>('http://localhost:3000/api/clientes/ultimos');
+//   updateCliente(id: number, cliente: Cliente) {
+//   return this.http.put<Cliente>(`/api/clientes/${id}`, cliente);
+// }
+
+
+
+
+desactivarCliente(id: number) {
+
+   return this.http.patch<Cliente>(
+      `${this.myAppUrl}${this.myApiUrl}${id}`,
+      {}
+    );
+  }
 }
 
+ 
 // getUltimasAbogadas(): Observable<Abogada[]> {
 //   return this.http.get<Abogada[]>('http://localhost:3000/api/abogadas/ultimas');
 // }
-}
+

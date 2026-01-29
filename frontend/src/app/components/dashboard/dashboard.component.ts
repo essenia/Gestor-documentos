@@ -38,7 +38,7 @@ export class DashboardComponent implements OnInit {
   ngOnInit(): void {
     this.rolUsuario = this.auth.getRol(); // obtiene el rol del usuario logueado
     console.log('ROL:', this.rolUsuario); //  sirve para debug
-        this.cargarUltimosClientes();
+        // this.cargarUltimosClientes();
 
 
   }
@@ -54,19 +54,19 @@ export class DashboardComponent implements OnInit {
     
     
     
-    cargarUltimosClientes() {
-    this.usuariosService.getUltimosClientes().subscribe(
-      clientes => {
-        this.ultimosClientes = clientes;
-        this.totalClientes = clientes.length; // puedes hacer otro endpoint para total real
-      },
-      err => console.error(err)
-    );
-  }
+  //   cargarUltimosClientes() {
+  //   this.usuariosService.getUltimosClientes().subscribe(
+  //     clientes => {
+  //       this.ultimosClientes = clientes;
+  //       this.totalClientes = clientes.length; // puedes hacer otro endpoint para total real
+  //     },
+  //     err => console.error(err)
+  //   );
+   }
 
     
 
 
 
-}
 
+  

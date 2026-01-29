@@ -12,6 +12,10 @@ export interface Cliente {
   direccion?: string;
   notas_internas?: string;
   activo: boolean;
-    User?: User;
+
+   usuario?: { 
+        id: number; 
+    email: string;
+  };
 
 }

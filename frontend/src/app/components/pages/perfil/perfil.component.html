@@ -1,0 +1,35 @@
+<div class="container mt-4" *ngIf="usuario">
+  <h3 class="mb-4 text-center text-md-start">Mi Perfil</h3>
+
+  <div class="card p-4 shadow-sm mx-auto" 
+       style="max-width: 500px; width: 90%;">
+    
+    <!-- FOTO PERFIL -->
+    <div class="text-center mb-4">
+      <img [src]="fotoPerfil" 
+           class="rounded-circle border" 
+           style="width: 120px; height: 120px; object-fit: cover;" 
+           alt="Foto de perfil">
+    </div>
+
+    <!-- INFO USUARIO -->
+    <div class="mb-2"><strong>Email:</strong> {{ usuario.email }}</div>
+    <div class="mb-2"><strong>Rol:</strong> {{ getNombreRol(usuario.id_rol) }}</div>
+    <div class="mb-2">
+      <strong>Requiere cambio de password:</strong> 
+      {{ usuario.requiere_cambio_password ? 'Sí' : 'No' }}
+    </div>
+
+    <!-- BOTONES -->
+    <div class="mt-3 d-flex flex-column flex-md-row justify-content-center gap-2">
+      <button class="btn btn-primary w-100 w-md-auto" routerLink="/perfil/editar">✏️ Editar Perfil</button>
+      <button class="btn btn-secondary w-100 w-md-auto" routerLink="/perfil/foto">📷 Subir Foto</button>
+    </div>
+
+  </div>
+</div>
+
+<!-- LOADING -->
+<div *ngIf="!usuario" class="text-center mt-5">
+  <p>Cargando perfil...</p>
+</div>
