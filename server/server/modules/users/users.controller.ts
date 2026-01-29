@@ -46,7 +46,7 @@ const hash = await bcrypt.hash(password,10);
     })
    }
   // Crea un nuevo usuario en la base de datos
-await User.create({
+const newUser  = await User.create({
 
     email,
     password_hash :hash,
@@ -55,9 +55,17 @@ await User.create({
     activo: true
 });
     // return  res.sendStatus(201);
-     res.status(201).json({
-      msg: 'Usuario creado correctamente'
-    });
+    //  res.status(201).json({
+    //   msg: 'Usuario creado correctamente'
+    // });
+    // Devuelve el usuario completo o al menos su ID
+    const userId = newUser.getDataValue('id');
+
+res.status(201).json({
+  id: userId,
+  email: newUser.getDataValue(email),
+  id_rol: newUser.getDataValue(id_rol)
+});
  } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Error al crear usuario' });

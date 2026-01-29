@@ -23,7 +23,11 @@ export const getClienteById = async (req: Request, res: Response) => {
   try {
     const cliente = await Cliente.findOne({
       where: { id },
-      include: User
+      // include: User
+      include: [{
+        model: User,
+        attributes: ['id', 'email'] // Solo los campos que quiero enviar 
+      }]
     });
 
     if (!cliente) return res.status(404).json({ error: 'Cliente no encontrado' });
@@ -100,7 +104,15 @@ export const actualizarCliente = async (req: Request, res: Response) => {
 
   try {
     // Buscar cliente
-    const cliente = await Cliente.findByPk(id);
+    // const cliente = await Cliente.findByPk(id);
+    const cliente = await Cliente.findOne({
+  where: { id },
+  // include: [{
+  //   model: User,
+  //   attributes: ['id', 'email']
+  // }]
+   include: { model: User, as: 'usuario', attributes: ['id', 'email'] }
+});
     if (!cliente) return res.status(404).json({ error: 'Cliente no encontrado' });
 
     // Reemplazar todos los campos (PUT)
@@ -116,9 +128,13 @@ export const actualizarCliente = async (req: Request, res: Response) => {
     await cliente.save();
 
     // Devolver cliente actualizado con info del usuario
-    const clienteActualizado = await Cliente.findOne({
+    // const clienteActualizado = await Cliente.findOne({
+    //   where: { id },
+    //   include: { model: User, attributes: { exclude: ['password_hash'] } }
+    // });
+      const clienteActualizado = await Cliente.findOne({
       where: { id },
-      include: { model: User, attributes: { exclude: ['password_hash'] } }
+      include: { model: User, as: 'usuario', attributes: ['id', 'email'] }
     });
 
     res.json(clienteActualizado);
@@ -146,3 +162,27 @@ export const getUltimosClientes = async (req :Request, res: Response) => {
     res.status(500).json({ message: 'Error al obtener últimos clientes' });
   }
 };
+
+
+
+
+
+export const marcarNoActivo = async (req: Request, res: Response) => {
+  const id = Number(req.params.id);
+
+  try {
+    const cliente = await Cliente.findByPk(id);
+    if (!cliente) {
+      return res.status(404).json({ error: 'Cliente no encontrado' });
+    }
+cliente.setDataValue('activo', false);
+const activo = cliente.getDataValue('activo'); 
+    await cliente.save();
+
+    res.json({ message: 'Cliente marcado como no activo' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error al marcar cliente como no activo' });
+  }
+};
+

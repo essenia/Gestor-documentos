@@ -1,6 +1,6 @@
 // src/clientes/cliente.routes.ts
 import { Router } from 'express';
-import { getClientes, getClienteById, crearCliente, actualizarCliente, getUltimosClientes } from './cliente.controller';
+import { getClientes, getClienteById, crearCliente, actualizarCliente, getUltimosClientes, marcarNoActivo } from './cliente.controller';
 
 const router = Router();
 
@@ -16,6 +16,7 @@ router.post('/', crearCliente);
 // PATCH para actualizar cliente
 router.put('/:id', actualizarCliente);
 router.get('/ultimos', getUltimosClientes);
+router.patch('/:id', marcarNoActivo);
 
 
 

@@ -26,7 +26,9 @@ const Cliente = database.define('clientes', {
   telefono: { type: DataTypes.STRING },
   direccion: { type: DataTypes.STRING },
   notas_internas: { type: DataTypes.TEXT },
-  activo: { type: DataTypes.BOOLEAN, defaultValue: true }
+  activo: {  type: DataTypes.BOOLEAN, 
+  allowNull: false,      // obligatorio
+  defaultValue: true }
 }, {
   tableName: 'clientes',
   timestamps: false
