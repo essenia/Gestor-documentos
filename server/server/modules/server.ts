@@ -5,6 +5,7 @@ import cors from "cors";
 import authRoutes from "./auth/auth.routes";
 import db from "./db/connection";
 import clienteRoutes from "./cliente/cliente.routes";
+import casoRoutes from "./casos/caso.routes";
 
 
 class Server {
@@ -39,6 +40,7 @@ class Server {
     this.app.use('/api/auth', authRoutes);
     this.app.use('/api/clientes', clienteRoutes);
         this.app.use('/api/clientes', clienteRoutes);
+this.app.use('/api/casos', casoRoutes);
 
 
 

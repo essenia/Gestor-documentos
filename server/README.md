@@ -195,4 +195,38 @@ http://localhost:3000/api/auth/change-password
 
 
 
+Crear Caso
+
+1-- crear nuevo caso
+2-- Después de crear el caso, crear automáticamente los registros en caso_documento según tipo_caso_documento.
+
+en el momento a crear  un caso  nuevo el sitema genera automaticamente un código único code caso 
+  usando DNI + año actual 
+
+ 3- Crear automaticamente el checklist de documentps de tabla caso_documento cuando se crea el caso 
+ cuando se crea un caso miramos qué trámite es  (tipo_tramite_id)      , buscamos sus docs en tipo_caso_docm   luego creamos copias de esos docus en caso docus 
+Crear caso -> mirar qué trámite es -> copiar sus documentos base -> crear checklist en caso_documento
+
+
+***  subir un archivo y actualizar ese registro con ruta, tamaño, tipo y fecha de subida
+
+Cuando se crea un caso:
+
+- Ya tiene su código único
+- Ya tiene su número de expediente
+-Ya tiene lista de documentos a entregar
+- El frontend puede mostrar el checklist inmediatamente
+-La abogada solo tiene que empezar a subir archivos
+ç
+CasoDocumento que es donde se almacenan los documentos reales de cada caso (el checklist + archivos subidos).
+
+Crear un caso (casos)
+
+Generar su checklist automático (caso_documento)
+
+Saber qué documentos subir y cuáles son obligatorios
+
+Consultar los documentos con su nombre desde la base
+
+Multer es un middleware de Node.js para Express que se usa para manejar la subida de archivos (file uploads),
 
