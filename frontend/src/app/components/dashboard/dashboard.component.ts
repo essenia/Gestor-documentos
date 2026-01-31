@@ -16,7 +16,7 @@ interface Persona {
 }
 @Component({
   selector: 'app-dashboard',
-  imports: [CommonModule, NavbarComponent, CommonModule,
+  imports: [CommonModule, CommonModule,
     FormsModule,
     RouterModule],
   templateUrl: './dashboard.component.html',

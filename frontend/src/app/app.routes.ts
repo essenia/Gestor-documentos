@@ -18,16 +18,18 @@ export const routes: Routes = [
       // Dashboard público para todos logueados
   // { path: 'dashboard', component: DashboardComponent },
 
-  {
-  path: '',
-  component: NavbarComponent,
-  children: [
-    { path: 'perfil', component: PerfilComponent },
-    { path: 'perfil/editar', component: EditarPerfilComponent },
-    { path: 'perfil/foto', component: SubirFotoComponent }
-  ]
-},
- 
+//   {
+//   path: '',
+//   component: NavbarComponent,
+//   children: [
+//     { path: 'perfil', component: PerfilComponent },
+//     { path: 'perfil/editar', component: EditarPerfilComponent },
+//     { path: 'perfil/foto', component: SubirFotoComponent }
+//   ]
+// },
+  { path: 'perfil', component: PerfilComponent },
+  { path: 'perfil/editar', component: EditarPerfilComponent },
+  { path: 'perfil/foto', component: SubirFotoComponent },
 
 
   // ADMIN + ABOGADA
@@ -37,6 +39,7 @@ export const routes: Routes = [
     canActivate: [roleGuardGuard],
     data: { roles: ['ADMIN', 'ABOGADA'] } // admin o abogada
   },
+  
   {
     path: 'listusers',
     component: ListUsersComponent,

@@ -4,6 +4,7 @@
 
  <div class="d-flex" id="wrapper">
 
+
   <!-- 🟦 SIDEBAR -->
   <div class="bg-white border-end" id="sidebar-wrapper" [class.d-none]="sidebarOculto">
     <div class="sidebar-heading text-center py-4 fw-bold fs-5 border-bottom">
@@ -97,12 +98,16 @@
   <div id="page-content-wrapper" class="w-100">
 
     <!-- 🔝 NAVBAR SUPERIOR -->
+     <!-- <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom px-4"> -->
+
     <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom px-4">
 
       <!-- ☰ HAMBURGUESA -->
       <button class="btn btn-outline-secondary me-3" (click)="toggleSidebar()">
         ☰
       </button>
+
+
 
       <span class="fw-bold">Panel de Control</span>
 
@@ -156,7 +161,10 @@
     </nav>
 
     <!-- 📦 CONTENIDO DINÁMICO -->
-    <div class="container-fluid p-4">
+    <!-- <div class="container-fluid p-4">
+      <router-outlet></router-outlet>
+    </div> -->
+     <div class="container-fluid p-4">
       <router-outlet></router-outlet>
     </div>
 

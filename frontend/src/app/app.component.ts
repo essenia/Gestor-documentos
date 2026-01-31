@@ -6,11 +6,12 @@ import { NgModule } from '@angular/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { ToastrModule } from 'ngx-toastr';
+import { NavbarComponent } from "./components/navbar/navbar.component";
 
 
 @Component({
   selector: 'app-root',
-  imports: [RouterModule],
+  imports: [NavbarComponent,RouterModule],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })

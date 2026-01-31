@@ -15,7 +15,7 @@ import { AuthServiceService } from '../../services/auth-service.service';
 export class NavbarComponent implements OnInit {
   rolUsuario: string = '';
 
-  sidebarOculto = false;
+  sidebarOculto = false; 
 
   nombreUsuario = 'Usuario';
   fotoPerfil = 'https://i.pravatar.cc/150?img=5';
@@ -42,9 +42,8 @@ perfilAbierto = false;
 
   }
 
-
-
-    toggleSidebar() {
+//
+  toggleSidebar() {
     this.sidebarOculto = !this.sidebarOculto;
   }
   togglePerfil() {
