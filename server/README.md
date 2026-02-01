@@ -229,4 +229,21 @@ Saber qué documentos subir y cuáles son obligatorios
 Consultar los documentos con su nombre desde la base
 
 Multer es un middleware de Node.js para Express que se usa para manejar la subida de archivos (file uploads),
+1- install Multer
+npm install multer
+npm install -D @types/multer
+
+http://localhost:3000/api/caso-documentos/4/upload
+
+
+
+
+http://localhost:3000/api/casos
+
+
+{
+  "id_cliente": 4,
+  "tipo_tramite_id": 1
+}
+
 

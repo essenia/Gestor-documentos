@@ -6,6 +6,7 @@ import authRoutes from "./auth/auth.routes";
 import db from "./db/connection";
 import clienteRoutes from "./cliente/cliente.routes";
 import casoRoutes from "./casos/caso.routes";
+import casoDocumentoRoutes from "./CasoDocumento/casoDocumento.routes";
 
 
 class Server {
@@ -39,8 +40,10 @@ class Server {
     this.app.use("/api/users", usersRoutes);
     this.app.use('/api/auth', authRoutes);
     this.app.use('/api/clientes', clienteRoutes);
-        this.app.use('/api/clientes', clienteRoutes);
-this.app.use('/api/casos', casoRoutes);
+    this.app.use('/api/clientes', clienteRoutes);
+    this.app.use('/api/casos', casoRoutes);
+    this.app.use('/api/caso-documentos', casoDocumentoRoutes);
+
 
 
 
