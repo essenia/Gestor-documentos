@@ -7,6 +7,10 @@ import Cliente from '../cliente/cliente.model';
 import TipoCasoDocumento from '../tipoCasoDocumento/tipoCasoDocumento.model';
 import CasoDocumento from '../CasoDocumento/casoDocumento.model';
 import TipoDocumento from '../tipoDocumento/tipoDocumento.model';
+import TipoTramite from '../tipoTramite/tipoTramite.model';
+import { Op } from 'sequelize';
+
+
 
 //crear Caso
 export const crearCaso = async (req:Request, res: Response)=>{
@@ -53,6 +57,7 @@ tipo_tramite_id,
     const documentosBase = await TipoCasoDocumento.findAll({
               where: { tipo_tramite_id }
  });
+ //map crea un nuevo array (documentosCaso) transformando cada elemento
  const documentosCaso  = documentosBase.map((doc: any)=>({
   id_caso: idCaso,
       tipo_documento_id: doc.tipo_documento_id,
@@ -67,6 +72,7 @@ tipo_tramite_id,
 
 
  }));
+ //Inserta todos los documentos en una sola consulta SQL.
      await CasoDocumento.bulkCreate(documentosCaso);
 // traer documentos con nombre
     const documentosCreados = await CasoDocumento.findAll({
@@ -89,3 +95,192 @@ tipo_tramite_id,
         error: (error as any).message  // <--- esto nos dice el mensaje real
     });
 }}
+
+/// obtener todos los casos 
+
+
+export const obtenerTodosCasos = async (req: Request, res: Response) => {
+  try {
+    const casos = await Caso.findAll({
+      include: [
+        { model: Cliente, as: 'cliente', attributes: ['id', 'nombre', 'apellido', 'dni'] },
+        { model: TipoTramite, as: 'tipoTramite', attributes: ['id', 'descripcion', 'area'] },
+        {
+          model: CasoDocumento,
+          as: 'documentos',
+          include: [
+            { model: TipoDocumento, as: 'tipoDocumento', attributes: ['id', 'nombre'] }
+          ]
+        }
+      ],
+      order: [
+        ['id', 'ASC'],
+        [{ model: CasoDocumento, as: 'documentos' }, 'id', 'ASC']
+      ]
+    });
+
+    res.json({
+      ok: true,
+      total: casos.length,
+      casos
+    });
+
+  } catch (error) {
+    console.error('Error al obtener todos los casos:', error);
+    res.status(500).json({
+      ok: false,
+      mensaje: 'Error al obtener todos los casos',
+      error: (error as any).message
+    });
+  }
+};
+// GET /api/casos/:id
+export const obtenerCasoPorId = async (req: Request, res: Response) => {
+  try {
+    const idCaso = Number(req.params.id);
+
+    if (isNaN(idCaso)) {
+      return res.status(400).json({
+        ok: false,
+        mensaje: 'ID de caso inválido'
+      });
+    }
+
+   const caso = await Caso.findByPk(idCaso, {
+  include: [
+    { model: Cliente, as: 'cliente' },
+    { model: TipoTramite, as: 'tipoTramite' },
+    {
+      model: CasoDocumento,
+      as: 'documentos',
+      include: [
+        { model: TipoDocumento, as: 'tipoDocumento' }
+      ]
+    }
+  ]
+});
+
+    if (!caso) {
+      return res.status(404).json({
+        ok: false,
+        mensaje: 'Caso no encontrado'
+      });
+    }
+
+    res.json({
+      ok: true,
+      caso
+    });
+
+  } catch (error) {
+    console.error('Error al obtener caso:', error);
+    res.status(500).json({
+      ok: false,
+      mensaje: 'Error al obtener el caso'
+    });
+  }
+};
+
+//*********** */
+
+
+/**
+ * Actualiza el estado de un caso según sus documentos obligatorios
+ * @param idCaso ID del caso a verificar
+ */
+export const actualizarEstadoCaso = async (idCaso: number) => {
+  try {
+    //  Traer todos los documentos del caso
+    const documentos: any[] = await CasoDocumento.findAll({
+
+    // const documentos = await CasoDocumento.findAll({
+      where: { id_caso: idCaso }
+    });
+
+//     if (documentos.length === 0) return; // No hay documentos, no hacer nada
+    
+//     //  Verificar si todos los documentos obligatorios están aprobados
+//     const todosAprobados = documentos
+//           .filter(doc => doc.es_obligatorio == 1) // solo obligatorios
+
+//       // .filter(doc => doc.es_obligatorio) // solo obligatorios
+//       .every(doc => doc.estado_validacion === "completado");
+
+//     //  Si todos aprobados, actualizar el caso
+//     if (todosAprobados) {
+//       await Caso.update(
+//         { estado: "en_tramite" },
+//         { where: { id: idCaso } }
+//       );
+//             console.log("CASO ACTUALIZADO A EN_TRAMITE");
+
+//     }
+
+//   } catch (error) {
+//     console.error("Error actualizando estado del caso:", error);
+//   }
+// };
+
+
+    if (documentos.length === 0) return;
+
+    console.log(" Docs del caso:", documentos.map(d => ({
+      id: d.id,
+      obligatorio: d.es_obligatorio,
+      estado: d.estado_validacion
+    })));
+
+    //  detectar obligatorios correctamente
+    const obligatorios = documentos.filter(doc => doc.es_obligatorio === true);
+
+    if (obligatorios.length === 0) return;
+
+    const todosAprobados = obligatorios.every(
+      doc => doc.estado_validacion === "completado"
+    );
+
+    console.log(" Todos obligatorios completados?", todosAprobados);
+
+    if (todosAprobados) {
+      await Caso.update(
+        { estado: "en_tramite" },
+        { where: { id: idCaso } }
+      );
+
+      console.log(" CASO ACTUALIZADO A EN_TRAMITE");
+    }
+
+  } catch (error) {
+    console.error("Error actualizando estado del caso:", error);
+  }
+};
+
+///******************************** */
+
+// Obtener documentos de un caso
+export const obtenerDocumentosCaso = async (req: Request, res: Response) => {
+  try {
+   // Obtener el ID del caso desde la URL
+    const idCaso = Number(req.params.id);
+//Verifica si el valor no es un número
+    if (isNaN(idCaso)) {
+      return res.status(400).json({ ok: false, mensaje: "ID de caso inválido" });
+    }
+//Busca todos los documentos relacionados con el caso
+    const documentos = await CasoDocumento.findAll({
+      where: { id_caso: idCaso },
+      include: [{ model: TipoDocumento, attributes: ['nombre'] }]
+    });
+//Devuelve la información en formato JSON.
+    res.json({
+      ok: true,
+      idCaso,
+      documentos
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ ok: false, mensaje: "Error al obtener documentos del caso" });
+  }
+};
+

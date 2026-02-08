@@ -247,3 +247,6 @@ http://localhost:3000/api/casos
 }
 
 
+PATCH http://localhost:3000/api/caso-documentos/4/validar
+
+

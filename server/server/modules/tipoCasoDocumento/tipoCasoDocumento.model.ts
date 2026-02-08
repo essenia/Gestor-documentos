@@ -45,7 +45,15 @@ const TipoCasoDocumento = database.define('tipo_caso_documento', {
 
 }, {
   tableName: 'tipo_caso_documento',
-  timestamps: false
+  timestamps: false,
+
+  indexes: [
+    {
+      unique: true,
+      fields: ['tipo_tramite_id', 'tipo_documento_id']
+    }
+  ]
+  
 });
 
 export default TipoCasoDocumento;

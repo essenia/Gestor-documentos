@@ -7,7 +7,9 @@ import db from "./db/connection";
 import clienteRoutes from "./cliente/cliente.routes";
 import casoRoutes from "./casos/caso.routes";
 import casoDocumentoRoutes from "./CasoDocumento/casoDocumento.routes";
-
+import TipoTramiteRoutes from "./tipoTramite/tipoTramite.routes";
+import TipoDocumentoRoutes from "./tipoDocumento/tipoDocumento.routes";
+import '../modules/associations';
 
 class Server {
   public app: Application;
@@ -43,6 +45,8 @@ class Server {
     this.app.use('/api/clientes', clienteRoutes);
     this.app.use('/api/casos', casoRoutes);
     this.app.use('/api/caso-documentos', casoDocumentoRoutes);
+    this.app.use('/api/tipoTramites', TipoTramiteRoutes);
+    this.app.use('/api/tipo-documentos',TipoDocumentoRoutes);
 
 
 
