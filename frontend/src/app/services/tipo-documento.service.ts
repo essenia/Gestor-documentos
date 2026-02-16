@@ -17,6 +17,6 @@ export class TipoDocumentoService {
   }
 // lista de tipo docs
   getTiposDocumento(): Observable<TipoDocumento[]> {
-    return this.http.get<TipoDocumento[]>(`${this.myAppUrl}/api/tipo-documentos`);
+    return this.http.get<TipoDocumento[]>(`${this.myAppUrl}api/tipo-documentos`);
   }
 }

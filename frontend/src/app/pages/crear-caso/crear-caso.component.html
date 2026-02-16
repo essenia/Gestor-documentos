@@ -1,0 +1,70 @@
+<div class="container d-flex justify-content-center align-items-center min-vh-50">
+  <div class="col-md-6 col-lg-5">
+    
+    <div class="card shadow-lg border-0 rounded-4">
+      <div class="card-body p-4">
+        
+        <h3 class="text-center text-primary mb-4 fw-bold">
+          Creación de Caso
+        </h3>
+
+        <form (ngSubmit)="crearCaso()" #casoForm="ngForm" novalidate>
+
+          <!-- Cliente -->
+          <div class="mb-3">
+            <label for="cliente" class="form-label fw-semibold">
+              Cliente
+            </label>
+            <select 
+              [(ngModel)]="clienteSeleccionado" 
+              name="cliente" 
+              id="cliente" 
+              class="form-select"
+              required>
+              <option value="" disabled selected>Seleccione un cliente</option>
+              <option *ngFor="let cliente of clientes" [value]="cliente.id">
+                {{ cliente.nombre }} {{ cliente.apellido }}
+              </option>
+            </select>
+            <div class="invalid-feedback">
+              Por favor seleccione un cliente.
+            </div>
+          </div>
+
+          <!-- Tipo de Trámite -->
+          <div class="mb-4">
+            <label for="tramite" class="form-label fw-semibold">
+              Tipo de Trámite
+            </label>
+            <select 
+              [(ngModel)]="tramiteSeleccionado" 
+              name="tramite" 
+              id="tramite" 
+              class="form-select"
+              required>
+              <option value="" disabled selected>Seleccione un trámite</option>
+              <option *ngFor="let tramite of tramites" [value]="tramite.id">
+                {{ tramite.descripcion }}
+              </option>
+            </select>
+            <div class="invalid-feedback">
+              Por favor seleccione un tipo de trámite.
+            </div>
+          </div>
+
+          <!-- Botón -->
+          <div class="d-grid">
+            <button 
+              type="submit" 
+              class="btn btn-primary btn-lg rounded-3"
+              [disabled]="!casoForm.form.valid">
+              Crear Caso
+            </button>
+          </div>
+
+        </form>
+      </div>
+    </div>
+
+  </div>
+</div>

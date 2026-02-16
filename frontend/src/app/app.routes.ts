@@ -11,6 +11,10 @@ import { ListClientesComponent } from './components/list-clientes/list-clientes.
 import { PerfilComponent } from './components/pages/perfil/perfil.component';
 import { EditarPerfilComponent } from './components/pages/editar-perfil/editar-perfil.component';
 import { SubirFotoComponent } from './components/pages/subir-foto/subir-foto.component';
+import { CrearCasoComponent } from './pages/crear-caso/crear-caso.component';
+import { DocumentosCasoComponent } from './pages/documentos-caso/documentos-caso.component';
+import { DocumentosComponent } from './components/documentos/documentos.component';
+import { ListCasosComponent } from './components/list-casos/list-casos.component';
 
 export const routes: Routes = [
 
@@ -67,6 +71,30 @@ export const routes: Routes = [
     canActivate: [roleGuardGuard],
     data: { roles: ['ABOGADA', 'ADMIN'] } // Solo estos roles pueden ver
   },
+
+
+  { path: 'casos/nuevo', component: CrearCasoComponent,
+     canActivate: [roleGuardGuard],
+    data: { roles: ['ABOGADA', 'ADMIN'] } 
+   },
+     {
+      
+     path: 'casos/:id/documentos', component: DocumentosCasoComponent,
+      canActivate: [roleGuardGuard],
+       data: { roles: ['ABOGADA', 'ADMIN'] 
+      }
+    },
+
+//ListCasosComponent
+
+      { path: 'casos', component: ListCasosComponent,
+
+         canActivate: [roleGuardGuard],
+       data: { roles: ['ABOGADA', 'ADMIN'] 
+      }
+       },
+
+
 
     { path: 'clientes/editar/:id', 
       component: AddEditClienteComponent,

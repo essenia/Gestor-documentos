@@ -1,0 +1,136 @@
+<div class="container my-4" style="max-width: 800px;">
+
+  <!-- Información del caso -->
+  <div class="info-caso mb-4 p-4 rounded shadow-sm bg-white">
+    <p class="mb-2 fs-5"><strong>Cliente:</strong> {{ clienteNombre }} {{ clienteApellido }}</p>
+    <p class="mb-0 fs-5"><strong>Trámite:</strong> {{ tramiteDescripcion }}</p>
+  </div>
+
+  <!-- Botón Nuevo Documento -->
+  <div class="mb-4 text-end">
+    <button class="btn btn-primary" (click)="abrirModalNuevoDocumento()">
+      <i class="fas fa-plus me-1"></i> Nuevo Documento
+    </button>
+  </div>
+
+  <!-- Lista de Documentos -->
+  <div *ngFor="let doc of documentos" class="document-card mb-4 p-3 rounded shadow-sm bg-white">
+    <div class="d-flex justify-content-between align-items-center mb-2">
+
+      <!-- Nombre del documento -->
+      <div class="fw-semibold fs-5">
+        <span *ngIf="doc.es_obligatorio" class="text-danger me-1">*</span>
+        {{ doc.nombre || getNombreTipo(doc.tipo_documento_id) || 'Documento' }}
+      </div>
+
+      <!-- Acciones -->
+      <div class="d-flex gap-3 align-items-center">
+        <!-- Subir archivo -->
+        <input type="file" hidden (change)="subirArchivo($event, doc)" #fileInput>
+        <i class="fas fa-upload text-secondary cursor-pointer" title="Subir" (click)="fileInput.click()"></i>
+
+        <!-- Ver -->
+        <i *ngIf="doc.ruta || doc.progreso! > 0" class="fas fa-eye text-secondary cursor-pointer"
+           title="Ver" (click)="verDocumento(doc)"></i>
+
+        <!-- Descargar -->
+        <i *ngIf="doc.ruta || doc.progreso! > 0" class="fas fa-download text-secondary cursor-pointer"
+           title="Descargar" (click)="descargarDocumento(doc)"></i>
+<!-- Validar documento -->
+
+
+ <i *ngIf="doc.ruta && isPendiente(doc)" 
+   class="fas fa-check-circle text-success cursor-pointer" 
+   title="Validar" 
+   (click)="validarDocumento(doc, 'completado')"></i>
+
+
+
+
+
+  <!-- Estado completado -->
+  <!-- <i *ngIf="doc.ruta && doc.estado_validacion === 'completado'" 
+     class="fas fa-circle-check text-success cursor-pointer" 
+     title="Completado"></i>
+        <!-- Estado completado -->
+        <!-- <i *ngIf="doc.ruta" class="fas fa-circle-check text-success cursor-pointer" title="Completado"></i> --> -->
+
+        <!-- Eliminar -->
+        <i *ngIf="doc.ruta || doc.progreso! > 0" class="fas fa-trash text-danger cursor-pointer"
+           title="Eliminar" (click)="eliminarDocumento(doc)"></i>
+      </div>
+
+    </div>
+
+    <!-- Estado del documento -->
+    <div class="small text-muted mb-2">
+      {{ doc.ruta ? 'Documento subido' : (doc.progreso! > 0 ? 'Subiendo...' : 'Pendiente de subida') }}
+    </div>
+
+    <!-- Barra de progreso -->
+    <div class="progress" style="height: 6px;">
+      <div class="progress-bar bg-success" [style.width]="doc.progreso! + '%'"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Nuevo Documento -->
+<div class="modal fade" id="modalNuevoDocumento" tabindex="-1" aria-labelledby="modalNuevoDocumentoLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalNuevoDocumentoLabel">Nuevo Documento</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+
+        <!-- Tipo de Documento -->
+        <div class="mb-3">
+          <label for="tipoDocumento" class="form-label">Tipo de Documento</label>
+          <select id="tipoDocumento" class="form-select" [(ngModel)]="nuevoDoc.tipo_documento_id" (change)="onTipoDocumentoChange()">
+            <option [ngValue]="null">-- Selecciona un tipo --</option>
+            <option *ngFor="let tipo of tiposDocumento" [ngValue]="tipo.id">{{ tipo.nombre }}</option>
+          </select>
+        </div>
+
+        <!-- Nuevo tipo -->
+        <div class="mb-3">
+          <label for="nuevoTipoDocumento" class="form-label">O ingresa un tipo nuevo</label>
+          <input id="nuevoTipoDocumento" type="text" class="form-control" [(ngModel)]="nuevoDoc.nuevo_tipo_nombre" placeholder="Nombre nuevo">
+        </div>
+
+        <!-- Nombre del documento -->
+        <div class="mb-3">
+          <label for="nombreDocumento" class="form-label">Nombre del Documento</label>
+          <input id="nombreDocumento" type="text" class="form-control" [(ngModel)]="nuevoDoc.nombre" placeholder="Escribe el nombre">
+        </div>
+
+        <!-- Comentarios -->
+        <div class="mb-3">
+          <label for="comentariosDocumento" class="form-label">Comentarios</label>
+          <textarea id="comentariosDocumento" class="form-control" [(ngModel)]="nuevoDoc.comentarios" rows="3" placeholder="Opcional"></textarea>
+        </div>
+
+        <!-- Obligatorio -->
+        <div class="form-check mb-3">
+          <input class="form-check-input" type="checkbox" id="obligatorioDocumento" [(ngModel)]="nuevoDoc.es_obligatorio">
+          <label class="form-check-label" for="obligatorioDocumento">
+            Documento Obligatorio
+          </label>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-primary" (click)="agregarDocumento(); cerrarModalNuevoDocumento()">Crear Documento</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .cursor-pointer { cursor: pointer; }
+  .document-card:hover {
+    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    transition: 0.3s;
+  }
+</style>
