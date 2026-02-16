@@ -147,3 +147,21 @@ http://localhost:3000/api/users
 http://localhost:4200/clientes/editar/2
 
 http://localhost/phpmyadmin/index.php?route=/sql&pos=0&db=gestordocumentos&table=usuarios
+
+
+
+al cerrar sesión soloo se limpiaba el localstorage , pero Angular no detectaba el cambio y
+el navbar seguía  visible
+
+la solución fue manejar el estado de autentificación de forma reactiva usando un BehaviorSubject en el 
+un AuthService
+*** cuando el usuario hace login o logout se emite un nuevo valor (true o false ) y el navbar se muestra  o oculta automáticamente con *ngIf según ese estado.
+
+
+
+
+creación funcion  getTramites() Para  Obtener trámites desde la tabla tipo_tramite
+
+http://localhost:3000/api/tipoTramites
+
+ 

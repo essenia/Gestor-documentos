@@ -1,7 +1,9 @@
 
 
 
-<app-navbar></app-navbar>  <!-- Siempre visible -->
+<!-- <app-navbar></app-navbar>  Siempre visible -->
+ <app-navbar *ngIf="authService.isLoggedIn$ | async"></app-navbar>
+
 
 
 <router-outlet></router-outlet>

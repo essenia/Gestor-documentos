@@ -4,6 +4,7 @@ import { actualizarEstadoCaso } from "../casos/caso.controller";
 import Caso from "../casos/caso.model";
 import path from "path";
 import fs from "fs";
+import TipoDocumento from "../tipoDocumento/tipoDocumento.model";
 
 
 export const subirDocumento = async (req: Request, res: Response) => {
@@ -186,3 +187,186 @@ try {
     });
   }
 };
+
+// POST /api/caso-documentos
+// export const crearDocumento = async (req: Request, res: Response) => {
+//   try {
+//     const { id_caso, nombre, descripcion } = req.body;
+
+//     if (!id_caso || !nombre) {
+//       return res
+//         .status(400)
+//         .json({ ok: false, mensaje: "id_caso y nombre son obligatorios" });
+//     }
+
+//     // Crear documento en DB
+//     const nuevoDocumento = await CasoDocumento.create({
+//       id_caso,
+//       nombre,
+//       descripcion: descripcion || null,
+//       estado_validacion: "pendiente", // estado inicial
+//       fecha_subida: null, // aún no se sube archivo
+//       ruta: null,
+//       tipo_archivo: null,
+//       tamano_archivo: null,
+//       comentarios: null,
+//     });
+
+//     res.status(201).json({
+//       ok: true,
+//       documento: nuevoDocumento,
+//       mensaje: "Documento creado correctamente",
+//     });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ ok: false, mensaje: "Error al crear documento" });
+//   }
+// };
+
+// POST /api/caso-documentos
+// export const crearDocumento = async (req: Request, res: Response) => {
+//   try {
+    
+//     // const { id_caso, nombre, descripcion, es_obligatorio } = req.body;
+
+//     // if (!id_caso || !nombre) {
+//     //   return res
+//     //     .status(400)
+//     //     .json({ ok: false, mensaje: "id_caso y nombre son obligatorios" });
+//     // }
+
+//  const { id_caso, tipo_documento_id, nombre, descripcion, es_obligatorio } = req.body;
+
+//     // Validaciones
+//     if (!id_caso) {
+//       return res.status(400).json({ msg: "El id del caso es obligatorio" });
+//     }
+//     if (!tipo_documento_id) {
+//       return res.status(400).json({ msg: "Debe seleccionar un tipo de documento" });
+//     }
+//     if (!nombre) {
+//       return res.status(400).json({ msg: "El nombre del documento es obligatorio" });
+//     }
+
+
+//     // Crear documento en DB
+//     const nuevoDocumento = await CasoDocumento.create({
+//       id_caso,
+//       tipo_documento_id: null,       // ⚡ No hay tipo predefinido
+//       nombre,                        // nombre ingresado por el usuario
+//       descripcion: descripcion || null,
+//       estado_validacion: "pendiente", // estado inicial
+//       fecha_subida: null,            // aún no se sube archivo
+//       ruta: null,
+//       tipo_archivo: null,
+//       tamano_archivo: null,
+//       comentarios: null,
+//       es_obligatorio: es_obligatorio ?? true, // si no viene, por defecto true
+//     });
+
+//     res.status(201).json({
+//       ok: true,
+//       documento: nuevoDocumento,
+//       mensaje: "Documento creado correctamente",
+//     });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ ok: false, mensaje: "Error al crear documento" });
+//   }
+// };
+
+
+export const crearDocumento = async (req: Request, res: Response) => {
+  try {
+    const {
+      id_caso,
+      tipo_documento_id,
+      nuevo_tipo_nombre,
+      nombre,
+      descripcion,
+      es_obligatorio
+    } = req.body;
+
+    // Validaciones básicas
+    if (!id_caso) {
+      return res.status(400).json({ msg: "El id del caso es obligatorio" });
+    }
+
+    if (!nombre) {
+      return res.status(400).json({ msg: "El nombre del documento es obligatorio" });
+    }
+
+    let tipoId = tipo_documento_id;
+
+    // Viene un tipo existente
+    if (tipoId) {
+      const tipoExistente = await TipoDocumento.findByPk(tipoId);
+      if (!tipoExistente) {
+        return res.status(400).json({ msg: "El tipo de documento seleccionado no existe" });
+      }
+    }
+    const caso = await Caso.findByPk(id_caso);
+if (!caso) {
+  return res.status(400).json({ msg: "El caso seleccionado no existe" });
+}
+
+    
+
+    //  No viene tipo pero viene nombre nuevo
+    if (!tipoId && nuevo_tipo_nombre) {
+      const tipoExistente = await TipoDocumento.findOne({
+        where: { nombre: nuevo_tipo_nombre }
+      });
+
+      if (tipoExistente) {
+        // tipoId = tipoExistente.id;
+  tipoId = tipoExistente.getDataValue("id");
+
+      } else {
+        const nuevoTipo = await TipoDocumento.create({
+          nombre: nuevo_tipo_nombre
+        });
+
+        tipoId = nuevoTipo.getDataValue("id");
+      }
+    }
+
+    // ❌ Si después de todo no hay tipo → error
+    if (!tipoId) {
+      return res.status(400).json({
+        msg: "Debe seleccionar un tipo de documento o ingresar uno nuevo"
+      });
+    }
+
+    // 🚀 Crear documento
+    const nuevoDocumento = await CasoDocumento.create({
+      id_caso,
+      tipo_documento_id: tipoId,
+      nombre,
+      descripcion: descripcion || null,
+      estado_validacion: "pendiente",
+      fecha_subida: null,
+      ruta: null,
+      tipo_archivo: null,
+      tamano_archivo: null,
+      comentarios: null,
+      es_obligatorio: es_obligatorio ?? true
+    });
+
+    return res.status(201).json({
+      ok: true,
+      documento: nuevoDocumento,
+      msg: "Documento creado correctamente"
+    });
+
+  } catch (error: any) {
+  console.error("Error al crear documento:", error.message, error);
+  return res.status(500).json({
+    ok: false,
+    msg: "Error al crear documento",
+    error: error.message
+  });
+}
+}
+
+

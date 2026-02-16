@@ -49,8 +49,27 @@ perfilAbierto = false;
   togglePerfil() {
   this.perfilAbierto = !this.perfilAbierto;
 }
-  logout() {
-    localStorage.clear(); // borra token y rol
-    this.router.navigate(['/login']);
+  // logout() {
+  //   localStorage.clear(); // borra token y rol
+  //   this.router.navigate(['/login']);
+  // }
+
+// logOut(): void {
+//   localStorage.removeItem('token');
+//   localStorage.removeItem('rol');
+//   localStorage.removeItem('userId');
+//   localStorage.removeItem('email');
+//   this.loggedInSubject.next(false);
+// }
+  logout(): void {
+    this.auth.logOut(); // 🔥 aquí desaparece el navbar
+
+    // this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+    // // this.router.navigate(['/login']);
+    // this.router.navigate(['/login']);
+    // });
+      window.location.href = '/login';
+
+
   }
 }

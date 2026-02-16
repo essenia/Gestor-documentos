@@ -15,6 +15,9 @@ import { Op } from 'sequelize';
 //crear Caso
 export const crearCaso = async (req:Request, res: Response)=>{
 try {
+      console.log("BODY RECIBIDO:", req.body);
+    console.log("TIPO TRAMITE:", typeof req.body.tipo_tramite_id);
+    console.log("USER:", res.locals.user);
     const {id_cliente, tipo_tramite_id} = req.body;
 const id_abogada = (res.locals.user as any).userId; // coincide con tu token
   //Buscar cliente para obtener DNI
@@ -57,6 +60,13 @@ tipo_tramite_id,
     const documentosBase = await TipoCasoDocumento.findAll({
               where: { tipo_tramite_id }
  });
+ if (documentosBase.length === 0) {
+  return res.status(400).json({
+    ok: false,
+    mensaje: 'Este tipo de trámite no tiene documentos configurados'
+  });
+}
+
  //map crea un nuevo array (documentosCaso) transformando cada elemento
  const documentosCaso  = documentosBase.map((doc: any)=>({
   id_caso: idCaso,
