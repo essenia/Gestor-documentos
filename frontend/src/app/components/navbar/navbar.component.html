@@ -15,10 +15,10 @@
 
       <!-- ADMIN -->
       <ng-container *ngIf="rolUsuario === 'ADMIN'">
-        <a routerLink="/sign" [queryParams]="{ rol: 'CLIENTE' }"
+        <!-- <a routerLink="/sign" [queryParams]="{ rol: 'CLIENTE' }"
            class="list-group-item list-group-item-action bg-transparent">
           ➕ Añadir Cliente
-        </a>
+        </a> -->
 
         <a routerLink="/sign" [queryParams]="{ rol: 'ABOGADA' }"
            class="list-group-item list-group-item-action bg-transparent">
@@ -73,7 +73,7 @@
            class="list-group-item list-group-item-action bg-transparent">
           👤 Mi Perfil
         </a>
-          <a routerLink="/perfil"
+          <a routerLink=""
            class="list-group-item list-group-item-action bg-transparent">
           🔔 Notificaciones
         </a>
@@ -116,10 +116,10 @@
         <!-- 🔔 NOTIFICACIONES -->
         <div class="dropdown">
           <button class="btn position-relative" data-bs-toggle="dropdown">
-            🔔
+            <!-- 🔔 -->
             <span *ngIf="notificaciones > 0"
               class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-              {{ notificaciones }}
+              <!-- {{ notificaciones }} -->
             </span>
           </button>
 

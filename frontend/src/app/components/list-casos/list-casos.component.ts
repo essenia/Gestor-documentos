@@ -13,11 +13,19 @@ import { FormsModule } from '@angular/forms';
 })
 export class ListCasosComponent  implements OnInit{
 
+mostrarModalVer: boolean = false;
+casoSeleccionado: Caso | null = null;
+
+
+  mostrarModalHistorial: boolean = false;
+historialEstados: any[] = [];
 
    casos: Caso[] = [];  // ahora tipado correctamente
   loading = true;
-
-
+  historial: any[] = [];
+historialCaso: Caso | null = null;
+//  historialCaso: Caso | null = null;
+// historial: HistorialEstado[] = [];
   casosFiltrados: Caso[] = [];
 
   // Filtros
@@ -30,6 +38,12 @@ export class ListCasosComponent  implements OnInit{
   pages: number[] = [];
   paginatedCasos: Caso[] = [];
 
+  historialVisible = false;
+  // casoSeleccionado: any;
+
+
+
+  
   constructor(private casoService: CasoService) {}
  ngOnInit(): void {
     this.cargarCasos();
@@ -111,11 +125,74 @@ export class ListCasosComponent  implements OnInit{
   }
 
   // Acciones opcionales
-  verCaso(caso: Caso) {
-    console.log('Ver caso:', caso);
-  }
+ verCaso(caso: Caso): void {
+  this.casoSeleccionado = caso;
+  this.mostrarModalVer = true;
+}
+//cerrar ModVer
+cerrarModalVer(): void {
+  this.mostrarModalVer = false;
+  this.casoSeleccionado = null;
+}
+
 
   editarCaso(caso: Caso) {
     console.log('Editar caso:', caso);
   }
+
+  cambiarEstado(caso: Caso, event: any) {
+  const nuevoEstado = event.target.value;
+
+  this.casoService.actualizarEstado(caso.id!, nuevoEstado)
+    .subscribe({
+      next: () => {
+        caso.estado = nuevoEstado;
+      },
+      error: () => {
+        alert('Error al actualizar estado');
+      }
+    });
 }
+
+
+
+
+// verHistorial(casoId: number) {
+//   this.casoService.getHistorial(casoId).subscribe({
+//     next: (res: any) => {
+//       if (res.ok) {
+//         this.historial = res.historial;
+//         // Aquí podrías abrir un modal para mostrarlo
+//       }
+//     },
+//     error: (err) => console.error(err)
+//   });
+// }
+
+
+verHistorial(caso: Caso) {
+  console.log('CLICK HISTORIAL', caso); // 👈 prueba
+
+  this.historialCaso = caso;
+
+  this.casoService.getHistorial(caso.id).subscribe({
+    next: (resp) => {
+      console.log('RESPUESTA HISTORIAL', resp); // 👈 prueba
+
+      if (resp.ok) {
+        this.historial = resp.historial;
+      }
+    },
+    error: (err) => console.error(err)
+  });
+}
+
+
+cerrarModalHistorial(): void {
+  this.mostrarModalHistorial = false;
+  this.historialEstados = [];
+  this.historialCaso = null;
+}
+
+}
+

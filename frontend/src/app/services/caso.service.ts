@@ -143,21 +143,10 @@ getDocumentoVerURL(id: number): string {
     );
   }
 
-//   crearDocumento(idCaso: number) {
-//   // Esto depende de tu backend, supongamos POST /api/caso-documentos
-//   return this.http.post(`${this.myAppUrl}caso-documentos`, { id_caso: idCaso });
-// }
-
-  // Crear un documento nuevo
-// crearDocumento(idCaso: number): Observable<CasoDocumento> {
-//   return this.http.post<CasoDocumento>(
-//     `${this.myAppUrl}api/caso-documentos`,
-//     { id_caso: idCaso }
-//   );
-// }
 
 
 
+// Crear Docs
 crearDocumento(documento: { 
   id_caso: number; 
   nombre: string; 
@@ -168,13 +157,7 @@ crearDocumento(documento: {
   return this.http.post(`${this.myAppUrl}api/caso-documentos`, documento);
 }
 
-
-
-// eliminarDocumento(id: number) {
-//   return this.http.delete(
-//     `${this.myAppUrl}api/caso-documentos/${id}`
-//   );
-// }
+//eliminar un Docs
 
 eliminarDocumento(id: number) {
   return this.http.delete(
@@ -182,6 +165,14 @@ eliminarDocumento(id: number) {
   );
 }
 
+actualizarEstado(id: number, nuevoEstado: string) {
+  return this.http.put<any>(`${this.myAppUrl}${this.myApiUrl}${id}/estado`, {
+    nuevoEstado
+  });
+}
 
+  getHistorial(casoId: number): Observable<any> {
+    return this.http.get(`${this.myAppUrl}api/casos/historial/${casoId}`);
+  }
 
 }

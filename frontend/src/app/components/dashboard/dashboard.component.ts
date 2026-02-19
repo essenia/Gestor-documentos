@@ -6,6 +6,7 @@ import { FormsModule } from '@angular/forms';
 import { AuthServiceService } from '../../services/auth-service.service';
 import { Cliente } from '../../interfaces/cliente';
 import { ClientService } from '../../services/client.service';
+import { ListUsersComponent } from "../list-users/list-users.component";
 
 
 

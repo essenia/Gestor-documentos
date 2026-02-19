@@ -34,6 +34,11 @@ export class SignInComponent {
   // Variable para controlar la animación de carga
   loading: boolean = false;
 
+    // Variables para mostrar/ocultar
+ passwordFieldType: string = 'password';
+confirmPasswordFieldType: string = 'password';
+
+
   constructor(
     private toastr: ToastrService,
     private _userService: UserService,
@@ -49,6 +54,36 @@ export class SignInComponent {
   if (rol === 'ABOGADA') this.id_rol = 2;
   if (rol === 'CLIENTE') this.id_rol = 3;
 }
+
+// Función para generar contraseña aleatoria
+generarPassword(longitud: number = 12): string {
+  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+[]{}|;:,.<>?";
+  let pass = '';
+  for (let i = 0; i < longitud; i++) {
+    pass += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return pass;
+}
+
+// Llamar cuando el input de password recibe focus
+generarPasswordSiVacio() {
+  if (!this.password) {
+    const pass = this.generarPassword();
+    this.password = pass;
+    this.confirmPassword = pass; // Para que coincida automáticamente
+  }
+}
+// Alterna visibilidad del password
+togglePasswordVisibility() {
+  this.passwordFieldType = this.passwordFieldType === 'password' ? 'text' : 'password';
+}
+
+toggleConfirmPasswordVisibility() {
+  this.confirmPasswordFieldType = this.confirmPasswordFieldType === 'password' ? 'text' : 'password';
+}
+
+
+
   addUser() {
     //validare que el usuario ingrese valores
     if (this.email == '' || this.password == '' || this.confirmPassword == '') {

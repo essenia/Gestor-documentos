@@ -11,13 +11,21 @@
 </div>
 
 <div class="form-floating mb-3">
-  <input type="password" [(ngModel)]="password"  name="password"  class="form-control"  placeholder="ingrese password">
+  <input [type]="passwordFieldType" [(ngModel)]="password"  name="password"  class="form-control"  placeholder="ingrese password" (focus)="generarPasswordSiVacio()">
   <label >Password</label>
+   <button type="button" class="btn btn-sm btn-outline-secondary position-absolute top-50 end-0 translate-middle-y me-2"
+              (click)="togglePasswordVisibility()">
+        <i class="bi" [ngClass]="passwordFieldType === 'password' ? 'bi-eye-slash' : 'bi-eye'"></i>
+      </button>
 </div>
 
 <div class="form-floating mb-3">
-  <input type="password" [(ngModel)]="confirmPassword" name="confirmPassword" class="form-control"  placeholder="ingrese password de nuevo">
+  <input  [type]="passwordFieldType" [(ngModel)]="confirmPassword" name="confirmPassword" class="form-control"  placeholder="ingrese password de nuevo">
   <label >Repetir Password</label>
+   <button type="button" class="btn btn-sm btn-outline-secondary position-absolute top-50 end-0 translate-middle-y me-2"
+              (click)="toggleConfirmPasswordVisibility()">
+        <i class="bi" [ngClass]="confirmPasswordFieldType === 'password' ? 'bi-eye-slash' : 'bi-eye'"></i>
+      </button>
 </div>
 <div class="d-grid gap-2 mb-3 ">
 

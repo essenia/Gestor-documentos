@@ -47,6 +47,10 @@ export class AddEditClienteComponent implements  OnInit {
   isEdit: boolean = false;
   loading: boolean = false;
 
+    // Variables para mostrar/ocultar
+ passwordFieldType: string = 'password';
+confirmPasswordFieldType: string = 'password';
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -91,6 +95,32 @@ export class AddEditClienteComponent implements  OnInit {
   //     }
   //   });
   // }
+// Función para generar contraseña aleatoria
+generarPassword(longitud: number = 12): string {
+  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+[]{}|;:,.<>?";
+  let pass = '';
+  for (let i = 0; i < longitud; i++) {
+    pass += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return pass;
+}
+
+// // Llamar cuando el input de password recibe focus
+// generarPasswordSiVacio() {
+//   if (!this.password) {
+//     const pass = this.generarPassword();
+//     this.password = pass;
+//     this.confirmPassword = pass; // Para que coincida automáticamente
+//   }
+// }
+// Alterna visibilidad del password
+togglePasswordVisibility() {
+  this.passwordFieldType = this.passwordFieldType === 'password' ? 'text' : 'password';
+}
+
+toggleConfirmPasswordVisibility() {
+  this.confirmPasswordFieldType = this.confirmPasswordFieldType === 'password' ? 'text' : 'password';
+}
 
     cargarCliente(id: number) {
     this.loading = true;
@@ -175,10 +205,10 @@ guardarCliente() {
   } else {
     // CREAR CLIENTE NUEVO
 
-    // 🔹 1. Asegurarse de que id_rol esté asignado
+    //  1. Asegurarse de que id_rol esté asignado
     this.usuario.id_rol = 3; // 3 = CLIENTE
 
-    // 🔹 2. Crear usuario primero
+    //  2. Crear usuario primero
     this.userService.signIn(this.usuario).subscribe({
       next: (resUsuario: any) => {
             console.log('Usuario creado:', resUsuario); // debe mostrar { id: 80, email: ... }

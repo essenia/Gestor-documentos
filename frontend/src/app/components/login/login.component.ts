@@ -68,7 +68,7 @@ export class LoginComponent {
       // Login normal (admin o abogada)
       this.authService.login(res.token, res.user.rol);
       localStorage.setItem('userId', res.user.id);
-      this.router.navigate(['/dashboard']);
+      this.router.navigate(['/listusers']);
     },
     error: (e: HttpErrorResponse) => {
       this.loading = false;

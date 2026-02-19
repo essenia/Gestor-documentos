@@ -14,7 +14,7 @@ export interface Caso {
   cod_caso: string;
   año: number;
   fecha_creacion: string;
-  fechaEstado?: string; //  fecha de último cambio de estado
+  fecha_estado?: string; //  fecha de último cambio de estado
 
 
    cliente?: Cliente;
