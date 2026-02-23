@@ -10,12 +10,11 @@ import { CrearDocumentoResponse } from '../../interfaces/crear-documento-respons
 import { Cliente } from '../../interfaces/cliente';
 import { AddEditClienteComponent } from "../../components/clientes/add-edit-cliente/add-edit-cliente.component";
 import { HttpEventType } from '@angular/common/http';
-import { ChangeDetectorRef } from '@angular/core';
+import { ChangeDetectorRef, NgZone } from '@angular/core';
 import { TipoTramite } from '../../interfaces/tipoTramite';
 import { ClientService } from '../../services/client.service';
 import { Caso } from '../../interfaces/caso';
 import * as bootstrap from 'bootstrap';
-
 
 @Component({
   selector: 'app-documentos-caso',
@@ -68,7 +67,8 @@ mostrarCamposExtra: boolean = false;
     private tipoDocumentoService: TipoDocumentoService,
         private clienteService: ClientService,
     private tramiteService: TipoDocumentoService,
-  private cdr: ChangeDetectorRef
+  private cdr: ChangeDetectorRef,  private ngZone: NgZone
+
 
   ) {}
 
@@ -263,14 +263,17 @@ validarDocumento(doc: CasoDocumento, estado: string) {
   }
 
   agregarDocumento() {
-    // if (!this.nuevoDoc.nombre.trim()) {
-    //   alert('Debe ingresar un nombre para el documento');
-    //   return;
-    // }
-   if (!this.nuevoDoc.nombre || !this.nuevoDoc.nombre.trim()) {
-  alert('El documento seleccionado no tiene nombre. Verifique la lista.');
-  return;
-}
+   
+//    if (!this.nuevoDoc.nombre || !this.nuevoDoc.nombre.trim()) {
+//   alert('El documento seleccionado no tiene nombre. Verifique la lista.');
+//   return;
+// }
+  const nombreDoc = this.nuevoDoc.nuevo_tipo_nombre?.trim() || this.nuevoDoc.nombre?.trim();
+
+  if (!nombreDoc) {
+    alert('El documento seleccionado no tiene nombre. Verifique la lista.');
+    return;
+  }
 
 
     const payload: any = {
@@ -284,28 +287,28 @@ validarDocumento(doc: CasoDocumento, estado: string) {
 
     this.casoService.crearDocumento(payload).subscribe({
       next: (res: any) => {
+
         const doc = {
           ...res.documento,
                 // nombre: res.documento.nombre || this.getNombreTipo(res.documento.tipo_documento_id),
 
           progreso: 0,
           ruta: null,
-         nombre: res.documento.nombre || this.getNombreTipo(res.documento.tipo_documento_id) || 'Nuevo Documento'
+        //  nombre: res.documento.nombre || this.getNombreTipo(res.documento.tipo_documento_id) || 'Nuevo Documento'
+        nombre: nombreDoc,
 
         };
+
         this.documentos.push(doc);
+
   this.nuevoDoc = { nombre: '', comentarios: '', es_obligatorio: true };
+
         this.cdr.detectChanges();
       },
       error: (err) => console.error('Error creando documento', err)
     });
   }
-// onTipoDocumentoChange() {
-//   // si eliges un tipo existente, limpiamos el nombre nuevo
-//   if (this.nuevoDoc.tipo_documento_id) {
-//     this.nuevoDoc.nuevo_tipo_nombre = '';
-//   }
-// }
+
 onTipoDocumentoChange() {
   const seleccionado = this.tiposDocumento.find(
     tipo => tipo.id === this.nuevoDoc.tipo_documento_id
@@ -316,9 +319,11 @@ onTipoDocumentoChange() {
     this.nuevoDoc.nombre = seleccionado.nombre;
     // si tienes un campo para nombre nuevo opcional
     this.nuevoDoc.nuevo_tipo_nombre = '';
+
   } else {
     this.nuevoDoc.nombre = ''; // si no hay selección, limpiamos
   }
+
 }
 
 }
