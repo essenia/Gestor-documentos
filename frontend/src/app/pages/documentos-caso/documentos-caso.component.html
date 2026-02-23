@@ -21,6 +21,8 @@
       <div class="fw-semibold fs-5">
         <span *ngIf="doc.es_obligatorio" class="text-danger me-1">*</span>
         {{ doc.nombre || getNombreTipo(doc.tipo_documento_id) || 'Documento' }}
+
+
       </div>
 
       <!-- Acciones -->
@@ -83,7 +85,12 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
       </div>
       <div class="modal-body">
-
+                <!-- Botón para mostrar formulario expandido -->
+         <div class="mb-3 text-end" *ngIf="!mostrarCamposExtra">
+          <button type="button" class="btn btn-sm btn-success" (click)="mostrarCamposExtra = true">
+            <i class="fas fa-plus me-1"></i> Añadir
+          </button>
+        </div>
         <!-- Tipo de Documento -->
         <div class="mb-3">
           <label for="tipoDocumento" class="form-label">Tipo de Documento</label>
@@ -94,30 +101,67 @@
         </div>
 
         <!-- Nuevo tipo -->
-        <div class="mb-3">
+        <!-- <div class="mb-3">
           <label for="nuevoTipoDocumento" class="form-label">O ingresa un tipo nuevo</label>
           <input id="nuevoTipoDocumento" type="text" class="form-control" [(ngModel)]="nuevoDoc.nuevo_tipo_nombre" placeholder="Nombre nuevo">
-        </div>
+        </div> -->
 
         <!-- Nombre del documento -->
-        <div class="mb-3">
+        <!-- <div class="mb-3">
           <label for="nombreDocumento" class="form-label">Nombre del Documento</label>
           <input id="nombreDocumento" type="text" class="form-control" [(ngModel)]="nuevoDoc.nombre" placeholder="Escribe el nombre">
-        </div>
+        </div> -->
 
         <!-- Comentarios -->
-        <div class="mb-3">
+        <!-- <div class="mb-3">
           <label for="comentariosDocumento" class="form-label">Comentarios</label>
           <textarea id="comentariosDocumento" class="form-control" [(ngModel)]="nuevoDoc.comentarios" rows="3" placeholder="Opcional"></textarea>
-        </div>
+        </div> -->
 
         <!-- Obligatorio -->
-        <div class="form-check mb-3">
+        <!-- <div class="form-check mb-3">
           <input class="form-check-input" type="checkbox" id="obligatorioDocumento" [(ngModel)]="nuevoDoc.es_obligatorio">
           <label class="form-check-label" for="obligatorioDocumento">
             Documento Obligatorio
           </label>
+        </div> -->
+         <!-- Campos extra que aparecen al clicar "Añadir" -->
+       <!-- Botón Añadir -->
+        <!-- <div class="mb-3 text-end" *ngIf="!mostrarCamposExtra">
+          <button type="button" class="btn btn-sm btn-success" (click)="mostrarCamposExtra = true">
+            <i class="fas fa-plus me-1"></i> Añadir
+          </button>
+        </div> -->
+
+        <!-- Campos extra que aparecen solo al hacer click en Añadir -->
+        <div *ngIf="mostrarCamposExtra">
+          <!-- Nuevo tipo -->
+          <div class="mb-3">
+            <label for="nuevoTipoDocumento" class="form-label">O ingresa un tipo nuevo</label>
+            <input id="nuevoTipoDocumento" type="text" class="form-control" [(ngModel)]="nuevoDoc.nuevo_tipo_nombre" placeholder="Nombre nuevo">
+          </div>
+
+          <!-- Nombre del documento -->
+          <div class="mb-3">
+            <label for="nombreDocumento" class="form-label">Nombre del Documento</label>
+            <input id="nombreDocumento" type="text" class="form-control" [(ngModel)]="nuevoDoc.nombre" placeholder="Escribe el nombre">
+          </div>
+
+          <!-- Comentarios -->
+          <div class="mb-3">
+            <label for="comentariosDocumento" class="form-label">Comentarios</label>
+            <textarea id="comentariosDocumento" class="form-control" [(ngModel)]="nuevoDoc.comentarios" rows="3" placeholder="Opcional"></textarea>
+          </div>
+
+          <!-- Obligatorio -->
+          <div class="form-check mb-3">
+            <input class="form-check-input" type="checkbox" id="obligatorioDocumento" [(ngModel)]="nuevoDoc.es_obligatorio">
+            <label class="form-check-label" for="obligatorioDocumento">
+              Documento Obligatorio
+            </label>
+          </div>
         </div>
+
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>

@@ -14,6 +14,16 @@ export const getUsers = async (req:Request, res:Response)=>{
  res.json(users);
 }
 
+// ===== Función para generar contraseña automática =====
+function generarPassword(longitud = 12) {
+    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+[]{}|;:,.<>?";
+    let password = "";
+    for (let i = 0; i < longitud; i++) {
+        password += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return password;
+}
+
 // Función para crear un nuevo usuario
 export const createUser = async (req:Request,res :Response)=> {
     try {

@@ -114,7 +114,7 @@ toggleConfirmPasswordVisibility() {
           'el usuario fue registrado con exito',
           'Usuario registrado',
         );
-        this.router.navigate(['/login']);
+        this.router.navigate(['/dashboard']);
       },
       error: (e: HttpErrorResponse) => {
         // Si ocurre un error

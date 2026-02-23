@@ -59,6 +59,9 @@ clienteApellido = '';
 tramiteDescripcion = '';
 
 
+
+mostrarCamposExtra: boolean = false;
+
   constructor(
     private route: ActivatedRoute,
     private casoService: CasoService,
@@ -118,14 +121,7 @@ cargarDocumentos() {
 }
 
 
-  // cargarDocumentos() {
-  //   this.casoService.getDocumentosCaso(this.idCaso).subscribe({
-  //     next: (res: any) => {
-  //       this.documentos = res.documentos; // ⚡ reemplaza, no concatena
-  //     },
-  //     error: (err) => console.error(err)
-  //   });
-  // }
+
 
   // Devuelve el nombre completo del cliente por ID
 getNombreCliente(idCliente: number): string {
@@ -147,86 +143,9 @@ getNombreTramite(idTramite: number): string {
     });
   }
 
-  // Subir archivo directamente
-  // subirArchivo(event: any, documentoId: number) {
-  //   const file = event.target.files[0];
-  //   if (!file) return;
-
-  //   this.casoService.subirDocumento(documentoId, file).subscribe({
-  //     next: () => this.cargarDocumentos(),
-  //     error: (err) => console.error(err)
-  //   });
-  // }
-
-  // subirArchivo(event: any, doc: any) {
-  //   const file = event.target.files[0];
-  //   if (!file) return;
-
-  //   doc.progreso = 0;
-  //   doc.ruta = '';
-
-  //   this.casoService.subirDocumento(doc.id, file).subscribe({
-  //     next: (event: any) => {
-  //       if (event.type === HttpEventType.UploadProgress && event.total) {
-  //         doc.progreso = Math.round((event.loaded / event.total) * 100);
-  //       } else if (event.type === HttpEventType.Response) {
-  //         doc.ruta = event.body.ruta;
-  //         doc.progreso = 100;
-  //       }
-  //     },
-  //     error: (err) => console.error('Error subiendo archivo:', err)
-  //   });
-  // }
-
- // Subir archivo
-//  subirArchivo(event: any, doc: CasoDocumento) {
-//     const file = event.target.files[0];
-//     if (!file) return;
-
-//     const index = this.documentos.indexOf(doc);
-//     this.documentos[index].progreso = 0;
-//     this.documentos[index].ruta = '';
-
-//     this.casoService.subirDocumento(doc.id, file).subscribe({
-//       next: (event: any) => {
-//         if (event.type === HttpEventType.UploadProgress && event.total) {
-//           this.documentos[index].progreso = Math.round((event.loaded / event.total) * 100);
-//           this.cdr.detectChanges();
-//         } else if (event.type === HttpEventType.Response) {
-//           this.documentos[index].ruta = event.body?.ruta.replace(/^\/?uploads\//, '');
-//           this.documentos[index].progreso = 100;
-//           this.cdr.detectChanges();
-//         }
-//       },
-//       error: (err) => console.error('Error subiendo archivo:', err)
-//     });
-//   }
+  
 
 
-// subirArchivo(event: any, doc: CasoDocumento) {
-//   const file = event.target.files[0];
-//   if (!file) return;
-
-//   const index = this.documentos.indexOf(doc);
-//   this.documentos[index].progreso = 0;
-
-//   this.casoService.subirDocumento(doc.id, file).subscribe({
-//     next: (event: any) => {
-
-//       if (event.type === HttpEventType.UploadProgress && event.total) {
-//         this.documentos[index].progreso =
-//           Math.round((event.loaded / event.total) * 100);
-//       }
-
-//       if (event.type === HttpEventType.Response) {
-//         // 🔥 AQUÍ ESTABA EL ERROR
-//         this.documentos[index].ruta = event.body.documento.ruta;
-//         this.documentos[index].progreso = 100;
-//       }
-//     },
-//     error: (err) => console.error('Error subiendo archivo:', err)
-//   });
-// }
 subirArchivo(event: any, doc: CasoDocumento) {
   const file = event.target.files[0];
   if (!file) return;
@@ -262,36 +181,13 @@ subirArchivo(event: any, doc: CasoDocumento) {
 }
 
 
-  // Ver documento
-  // verDocumento(ruta: string) {
-  // window.open(`http://localhost:3000/uploads/${ruta}`, '_blank');
-  // }
 
-
-// verDocumento(doc: CasoDocumento) {
-//   if (!doc.ruta) return; // si no hay archivo, no hace nada
-//   window.open(this.casoService.getDocumentoURL(doc.ruta), '_blank');
-// }
 
 verDocumento(doc: CasoDocumento) {
   if (!doc.id) return;
   window.open(this.casoService.getDocumentoVerURL(doc.id), '_blank');
 }
 
-// descargarDocumento(doc: CasoDocumento) {
-//   if (!doc.ruta) return;
-
-//   const url = this.casoService.getDocumentoURL(doc.ruta);
-
-//   // Extraemos solo el nombre del archivo
-//   const nombreArchivo = doc.ruta.split('/').pop() || 'archivo';
-
-//   const link = document.createElement('a');
-//   link.href = url;
-//   link.download = nombreArchivo; // nombre seguro
-//   link.target = '_blank'; // para algunos navegadores
-//   link.click();
-// }
 
 descargarDocumento(doc: CasoDocumento) {
   if (!doc.id) return;
@@ -307,47 +203,6 @@ descargarDocumento(doc: CasoDocumento) {
 
 
 
-  // Descargar documento
-  // descargarDocumento(ruta: string) {
-  //   window.open(`http://localhost:3000/${ruta}`, '_blank');
-  // }
-
-  // Eliminar documento
-  // eliminarDocumento(documentoId: number) {
-  //   if (!confirm('¿Seguro que deseas eliminar este documento?')) return;
-
-  //   this.casoService.eliminarDocumento(documentoId).subscribe({
-  //     next: () => this.cargarDocumentos(),
-  //     error: (err) => console.error(err)
-  //   });
-  // }
-
-  //eliminar un doc
-//   eliminarDocumento(id: number) {
-//   if (!confirm('¿Seguro que deseas eliminar este documento?')) return;
-
-//   this.casoService.eliminarDocumento(id).subscribe({
-//     next: () => {
-//       this.cargarDocumentos(); //  clave
-//     },
-//     error: (err) => console.error('Error eliminando documento', err)
-//   });
-// }
-
-// eliminarDocumento(doc: CasoDocumento) {
-//   if (!doc.ruta) return; // si no hay archivo, no hace nada
-//   if (!confirm('¿Seguro que deseas eliminar este archivo?')) return;
-
-//   this.casoService.eliminarDocumento(doc.id).subscribe({
-//     next: () => {
-//       // Limpiamos la ruta y progreso del documento
-//       doc.ruta = '';       //esto limpia la ruta
-//       doc.progreso = 0;    // opcional, reinicia la barra de progreso
-//       this.cdr.detectChanges(); // actualiza la vista inmediatamente
-//     },
-//     error: (err) => console.error('Error al eliminar archivo:', err)
-//   });
-// }
 
 eliminarDocumento(doc: CasoDocumento) {
   if (!doc.ruta) return; // si no hay archivo, no hace nada
@@ -368,13 +223,7 @@ eliminarDocumento(doc: CasoDocumento) {
 
 
 
-// validarDocumento(documentoId: number) {
-//   const comentario = prompt('Comentario (opcional):') || '';
-//   this.casoService.validarDocumento(documentoId, 'COMPLETADO', comentario).subscribe({
-//     next: () => this.cargarDocumentos(),
-//     error: (err) => console.error(err)
-//   });
-// }
+
 
 isPendiente(doc: CasoDocumento): boolean {
   return doc.estado_validacion?.toLowerCase() !== 'completado';
@@ -398,41 +247,6 @@ validarDocumento(doc: CasoDocumento, estado: string) {
 
 
 
-//   agregarDocumento() {
-//   // Llamamos al servicio para crear un documento vacío
-//   this.casoService.crearDocumento(this.idCaso)
-//     .subscribe({
-//       next: (res: CasoDocumento) => {
-//         // Creamos el objeto CasoDocumento para la lista
-//         const nuevo: CasoDocumento = {
-//           ...res,                       // datos del backend
-//           TipoDocumentoService: undefined, // no conocemos el tipo aún
-//           ruta: res.ruta || '',         // inicializamos ruta
-//           progreso: 0,                  // inicializamos progreso
-//           tipo_archivo: res.tipo_archivo || '',
-//           tamano_archivo: res.tamano_archivo || 0,
-//           fecha_subida: res.fecha_subida || '',
-//           fecha_caducidad: res.fecha_caducidad || null,
-//           estado_validacion: res.estado_validacion || 'PENDIENTE',
-//           es_obligatorio: res.es_obligatorio || false,
-//           comentarios: res.comentarios || null
-//         };
-
-//         // ⚡ Agregamos el nuevo documento al arreglo de documentos
-//         this.documentos.push(nuevo);
-
-//         // Limpiamos el modal de creación
-//         this.nuevoDoc = { tipo_documento_id: null, archivo: null };
-
-//         console.log('Documento agregado correctamente:', nuevo);
-//       },
-//       error: (err) => {
-//         console.error('Error al crear documento:', err);
-//         alert('No se pudo crear el documento.');
-//       }
-//     });
-// }
-
  abrirModalNuevoDocumento() {
     const modalEl = document.getElementById('modalNuevoDocumento');
     if (modalEl) new bootstrap.Modal(modalEl).show();
@@ -442,13 +256,22 @@ validarDocumento(doc: CasoDocumento, estado: string) {
     const modalEl = document.getElementById('modalNuevoDocumento');
     const modal = bootstrap.Modal.getInstance(modalEl!);
     modal?.hide();
+
+  // Limpiar formulario al cerrar
+  this.nuevoDoc = { nombre: '', comentarios: '', es_obligatorio: true };
+  this.mostrarCamposExtra = false;
   }
 
   agregarDocumento() {
-    if (!this.nuevoDoc.nombre.trim()) {
-      alert('Debe ingresar un nombre para el documento');
-      return;
-    }
+    // if (!this.nuevoDoc.nombre.trim()) {
+    //   alert('Debe ingresar un nombre para el documento');
+    //   return;
+    // }
+   if (!this.nuevoDoc.nombre || !this.nuevoDoc.nombre.trim()) {
+  alert('El documento seleccionado no tiene nombre. Verifique la lista.');
+  return;
+}
+
 
     const payload: any = {
       id_caso: this.idCaso,
@@ -463,6 +286,8 @@ validarDocumento(doc: CasoDocumento, estado: string) {
       next: (res: any) => {
         const doc = {
           ...res.documento,
+                // nombre: res.documento.nombre || this.getNombreTipo(res.documento.tipo_documento_id),
+
           progreso: 0,
           ruta: null,
          nombre: res.documento.nombre || this.getNombreTipo(res.documento.tipo_documento_id) || 'Nuevo Documento'
@@ -475,14 +300,27 @@ validarDocumento(doc: CasoDocumento, estado: string) {
       error: (err) => console.error('Error creando documento', err)
     });
   }
+// onTipoDocumentoChange() {
+//   // si eliges un tipo existente, limpiamos el nombre nuevo
+//   if (this.nuevoDoc.tipo_documento_id) {
+//     this.nuevoDoc.nuevo_tipo_nombre = '';
+//   }
+// }
 onTipoDocumentoChange() {
-  // si eliges un tipo existente, limpiamos el nombre nuevo
-  if (this.nuevoDoc.tipo_documento_id) {
+  const seleccionado = this.tiposDocumento.find(
+    tipo => tipo.id === this.nuevoDoc.tipo_documento_id
+  );
+
+  if (seleccionado) {
+    // asignamos el nombre automáticamente
+    this.nuevoDoc.nombre = seleccionado.nombre;
+    // si tienes un campo para nombre nuevo opcional
     this.nuevoDoc.nuevo_tipo_nombre = '';
+  } else {
+    this.nuevoDoc.nombre = ''; // si no hay selección, limpiamos
   }
 }
 
-
 }
 
 
@@ -496,11 +334,4 @@ onTipoDocumentoChange() {
 
 
 
-  // Agregar nuevo documento vacío
-  // agregarDocumento() {
-  //   this.casoService.crearDocumento(this.idCaso)
-  //     .subscribe(() => this.cargarDocumentos());
-  // }
-
-// 
-    
+  

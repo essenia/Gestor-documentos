@@ -33,7 +33,7 @@ historialCaso: Caso | null = null;
   textoBuscar = '';
    // Paginación
   currentPage = 1;
-  pageSize = 10;
+  pageSize = 7;
   totalPages = 1;
   pages: number[] = [];
   paginatedCasos: Caso[] = [];
@@ -57,6 +57,7 @@ historialCaso: Caso | null = null;
         if (res.ok) {
           this.casos = res.casos;
           this.casosFiltrados = [...this.casos];
+          this.ordenarCasos();
           this.updatePagination();
         }
       },
@@ -64,7 +65,13 @@ historialCaso: Caso | null = null;
       complete: () => this.loading = false
     });
   }
-
+ordenarCasos(): void {
+  this.casosFiltrados.sort((a, b) =>
+    (a.cliente?.nombre ?? '')
+      .toLowerCase()
+      .localeCompare((b.cliente?.nombre ?? '').toLowerCase())
+  );
+}
   // Filtros y búsqueda
   aplicarFiltros(): void {
     const texto = this.textoBuscar.trim().toLowerCase();

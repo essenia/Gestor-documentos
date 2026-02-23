@@ -1,21 +1,20 @@
-<div class="container mt-4">
+<div class="container mt-0">
   <div class="row justify-content-center">
     <div class="col-md-8">
-
-      <div class="card shadow-sm">
+      <div class="card shadow-lg">
         <div class="card-body">
           <h5 class="card-title mb-3">
-            {{ isEdit ? 'Editar Cliente' : 'Crear Cliente y Usuario' }}
+            {{ isEdit ? "Editar Cliente" : "Crear Cliente y Usuario" }}
           </h5>
 
           <app-spinner *ngIf="loading"></app-spinner>
 
           <form *ngIf="!loading" (ngSubmit)="guardarCliente()" #form="ngForm">
-
             <!-- USUARIO -->
-            <h6>Datos del Usuario</h6>
+            <!-- <h6>Datos del Usuario</h6> -->
+            <h6 class="fw-bold mb-3 border-bottom pb-2">Datos del Usuario</h6>
             <div class="row">
-
+              <!-- 
               <div class="col-md-6 mb-3">
                 <label class="form-label">Email</label>
                 <input type="email"
@@ -42,95 +41,134 @@
                        [(ngModel)]="usuario.repeatPassword"
                        name="repeatPassword"
                        required>
+              </div> -->
+              <div class="fw-bold col-12 col-md-4 mb-3">
+                <label class="form-label">Email</label>
+                <input
+                  type="email"
+                  class="form-control"
+                  [(ngModel)]="usuario.email"
+                  name="email"
+                  required
+                />
               </div>
 
+              <div class="fw-bold col-12 col-md-4 mb-3">
+                <label class="form-label">Password</label>
+                <input
+                  type="password"
+                  class="form-control"
+                  [(ngModel)]="usuario.password"
+                  name="password"
+                  required
+                />
+              </div>
+
+              <div class="fw-bold col-12 col-md-4 mb-3">
+                <label class="form-label">Repetir Password</label>
+                <input
+                  type="password"
+                  class="form-control"
+                  [(ngModel)]="usuario.repeatPassword"
+                  name="repeatPassword"
+                  required
+                />
+              </div>
             </div>
 
-            <hr>
+            <hr />
 
             <!-- CLIENTE -->
-            <h6>Datos del Cliente</h6>
+            <h6 class="fw-bold mb-3 border-bottom pb-2">Datos del Cliente</h6>
             <div class="row">
-
-              <div class="col-md-6 mb-3">
+              <div class="fw-bold col-md-6 mb-3">
                 <label class="form-label">Nombre</label>
-                <input type="text"
-                       class="form-control"
-                       [(ngModel)]="cliente.nombre"
-                       name="nombre"
-                       required>
+                <input
+                  type="text"
+                  class="form-control"
+                  [(ngModel)]="cliente.nombre"
+                  name="nombre"
+                  required
+                />
               </div>
 
-              <div class="col-md-6 mb-3">
+              <div class="fw-bold col-md-6 mb-3">
                 <label class="form-label">Apellido</label>
-                <input type="text"
-                       class="form-control"
-                       [(ngModel)]="cliente.apellido"
-                       name="apellido"
-                       required>
+                <input
+                  type="text"
+                  class="form-control"
+                  [(ngModel)]="cliente.apellido"
+                  name="apellido"
+                  required
+                />
               </div>
-
-              <div class="col-md-6 mb-3">
-                <label class="form-label">DNI</label>
-                <input type="text"
-                       class="form-control"
-                       [(ngModel)]="cliente.dni"
-                       name="dni"
-                       required>
-              </div>
-
-              <div class="col-md-6 mb-3">
+              <div class="fw-bold col-md-6 mb-3">
                 <label class="form-label">Tipo DNI</label>
-                <select class="form-select"
-                        [(ngModel)]="cliente.tipo_dni"
-                        name="tipo_dni"
-                        required>
+                <select
+                  class="form-select"
+                  [(ngModel)]="cliente.tipo_dni"
+                  name="tipo_dni"
+                  required
+                >
                   <option value="DNI">DNI</option>
                   <option value="Pasaporte">Pasaporte</option>
                 </select>
               </div>
+              <div class="fw-bold col-md-6 mb-3">
+                <label class="form-label">DNI</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  [(ngModel)]="cliente.dni"
+                  name="dni"
+                  required
+                />
+              </div>
 
-              <div class="col-md-6 mb-3">
+              <div class="fw-bold col-md-6 mb-3">
                 <label class="form-label">Teléfono</label>
-                <input type="text"
-                       class="form-control"
-                       [(ngModel)]="cliente.telefono"
-                       name="telefono"
-                       placeholder="+34 600 000 000">
+                <input
+                  type="text"
+                  class="form-control"
+                  [(ngModel)]="cliente.telefono"
+                  name="telefono"
+                  placeholder="+34 600 000 000"
+                />
               </div>
 
-              <div class="col-md-6 mb-3">
+              <div class="fw-bold col-md-6 mb-3">
                 <label class="form-label">Dirección</label>
-                <input type="text"
-                       class="form-control"
-                       [(ngModel)]="cliente.direccion"
-                       name="direccion">
+                <input
+                  type="text"
+                  class="form-control"
+                  [(ngModel)]="cliente.direccion"
+                  name="direccion"
+                />
               </div>
 
-              <div class="col-12 mb-3">
+              <div class="fw-bold col-12 mb-3">
                 <label class="form-label">Notas internas</label>
-                <textarea class="form-control"
-                          rows="2"
-                          [(ngModel)]="cliente.notas_internas"
-                          name="notas_internas"></textarea>
+                <textarea
+                  class="form-control"
+                  rows="2"
+                  [(ngModel)]="cliente.notas_internas"
+                  name="notas_internas"
+                ></textarea>
               </div>
-
             </div>
 
             <div class="d-flex justify-content-end gap-2">
               <button class="btn btn-primary" type="submit">
-                {{ isEdit ? 'Actualizar' : 'Crear Usuario y Cliente' }}
+                {{ isEdit ? "Actualizar" : "Crear" }}
               </button>
 
               <button class="btn btn-primary" routerLink="/clientes">
                 Volver
               </button>
             </div>
-
           </form>
         </div>
       </div>
-
     </div>
   </div>
 </div>

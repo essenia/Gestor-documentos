@@ -67,7 +67,13 @@ const Caso = database.define('casos', {
   fecha_creacion: {
     type: DataTypes.DATE,
     defaultValue: DataTypes.NOW
+  },
+    //  fecha de última actualización del estado
+  fecha_estado: {
+    type: DataTypes.DATE,
+    defaultValue: DataTypes.NOW
   }
+
 
 }, {
   tableName: 'casos',

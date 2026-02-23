@@ -1,7 +1,7 @@
 
 
 
-import { Request, Response } from 'express';
+import { Request, response, Response } from 'express';
 import Caso from './caso.model';
 import Cliente from '../cliente/cliente.model';
 import TipoCasoDocumento from '../tipoCasoDocumento/tipoCasoDocumento.model';
@@ -9,6 +9,7 @@ import CasoDocumento from '../CasoDocumento/casoDocumento.model';
 import TipoDocumento from '../tipoDocumento/tipoDocumento.model';
 import TipoTramite from '../tipoTramite/tipoTramite.model';
 import { Op } from 'sequelize';
+import HistorialEstado from '../historialEstado/historialEstado.model';
 
 
 
@@ -207,29 +208,7 @@ export const actualizarEstadoCaso = async (idCaso: number) => {
       where: { id_caso: idCaso }
     });
 
-//     if (documentos.length === 0) return; // No hay documentos, no hacer nada
-    
-//     //  Verificar si todos los documentos obligatorios están aprobados
-//     const todosAprobados = documentos
-//           .filter(doc => doc.es_obligatorio == 1) // solo obligatorios
 
-//       // .filter(doc => doc.es_obligatorio) // solo obligatorios
-//       .every(doc => doc.estado_validacion === "completado");
-
-//     //  Si todos aprobados, actualizar el caso
-//     if (todosAprobados) {
-//       await Caso.update(
-//         { estado: "en_tramite" },
-//         { where: { id: idCaso } }
-//       );
-//             console.log("CASO ACTUALIZADO A EN_TRAMITE");
-
-//     }
-
-//   } catch (error) {
-//     console.error("Error actualizando estado del caso:", error);
-//   }
-// };
 
 
     if (documentos.length === 0) return;
@@ -294,3 +273,82 @@ export const obtenerDocumentosCaso = async (req: Request, res: Response) => {
   }
 };
 
+
+// export const actualizarEstado =  async (req: Request, res: Response) => {
+ 
+//   const id = Number(req.params.id);
+//   const { nuevoEstado } = req.body;
+
+//   try {
+//     await Caso.update(
+//       {
+//         estado: nuevoEstado,
+//         fecha_estado: new Date()
+//       },
+//       { where: { id } }
+//     );
+
+//     res.json({ ok: true });
+
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ ok: false });
+//   }
+// }
+
+
+
+
+export const actualizarEstado = async (req: Request, res: Response) => {
+  try {
+    const casoId = Number(req.params.id);
+    const { nuevoEstado } = req.body;
+    const userId = (res.locals.user as any).userId; 
+
+    if (!nuevoEstado) {
+      return res.status(400).json({ ok: false, msg: 'Nuevo estado requerido' });
+    }
+
+    const caso = await Caso.findByPk(casoId);
+    if (!caso) return res.status(404).json({ ok: false, msg: 'Caso no encontrado' });
+
+    const estadoAnterior = caso.getDataValue('estado');
+
+    // Actualizar estado y fecha
+    caso.setDataValue('estado', nuevoEstado);
+    caso.setDataValue('fecha_estado', new Date());
+    await caso.save();
+
+    // Guardar historial
+    await HistorialEstado.create({
+  
+      caso_id: caso.getDataValue('id'),   
+  estado_anterior: estadoAnterior,
+  estado_nuevo: nuevoEstado,
+  fecha_cambio: new Date(),
+  usuario_id: userId 
+    });
+   return res.json({ ok: true, msg: 'Estado actualizado', caso });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ ok: false, msg: 'Error al actualizar estado' });
+  }
+}
+
+// GET /casos/historial/:id
+export const obtenerHistorialCaso = async (req: Request, res: Response) => {
+ try {
+    const casoId = Number(req.params.id);
+
+    const historial = await HistorialEstado.findAll({
+      where: { caso_id: casoId },  // ⚠ aquí debe ser caso_id
+      order: [['fecha_cambio', 'DESC']]
+    });
+
+    return res.json({ ok: true, historial });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ ok: false, msg: 'Error al obtener historial' });
+  }
+};

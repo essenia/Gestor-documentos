@@ -39,7 +39,7 @@ filtro = {
 };
   // Paginación simple
   currentPage: number = 1;
-  pageSize: number = 10;
+  pageSize: number = 8;
   totalPages: number = 1;
   pages: number[] = [];
 
@@ -58,6 +58,7 @@ filtro = {
       next: (res: Cliente[]) => {
         this.clientes = res;
         this.clientesFiltrados = [...res]; 
+               this.ordenarClientes();
 
         // this.totalPages = Math.ceil(this.clientes.length / this.pageSize);
               this.totalPages = Math.ceil(this.clientesFiltrados.length / this.pageSize);
@@ -125,6 +126,12 @@ scrollAction() {
       this.updatePagination();
     }
   }
+// ordenar por  nombre ASC
+  ordenarClientes(): void {
+  this.clientesFiltrados.sort((a, b) =>
+    a.nombre?.toLowerCase().localeCompare(b.nombre?.toLowerCase())
+  );
+}
 
   //Buscador 
 
