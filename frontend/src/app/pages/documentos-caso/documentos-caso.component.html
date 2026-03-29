@@ -1,96 +1,75 @@
 <div class="container my-4" style="max-width: 800px;">
 
   <!-- Información del caso -->
-  <div class="info-caso mb-4 p-4 rounded shadow-sm bg-white">
-    <p class="mb-2 fs-5"><strong>Cliente:</strong> {{ clienteNombre }} {{ clienteApellido }}</p>
-    <p class="mb-0 fs-5"><strong>Trámite:</strong> {{ tramiteDescripcion }}</p>
+  <div class="card shadow-sm mb-4 p-3">
+    <div class="d-flex justify-content-between align-items-center">
+      <div class="fw-semibold">
+        <span class="text-muted">Cliente:</span> {{ clienteNombre }} {{ clienteApellido }}
+      </div>
+      <div class="fw-semibold">
+        <span class="text-muted">Trámite:</span> {{ tramiteDescripcion }}
+      </div>
+    </div>
   </div>
 
   <!-- Botón Nuevo Documento -->
-  <div class="mb-4 text-end">
+  <div class="mb-3 text-end">
     <button class="btn btn-primary" (click)="abrirModalNuevoDocumento()">
       <i class="fas fa-plus me-1"></i> Nuevo Documento
     </button>
   </div>
 
   <!-- Lista de Documentos -->
-  <div *ngFor="let doc of documentos" class="document-card mb-4 p-3 rounded shadow-sm bg-white">
-    <div class="d-flex justify-content-between align-items-center mb-2">
+  <div *ngFor="let doc of documentos" class="card mb-3 shadow-sm">
+    <div class="card-body py-2 d-flex justify-content-between align-items-center">
 
       <!-- Nombre del documento -->
-      <div class="fw-semibold fs-5">
+      <div class="fw-semibold">
         <span *ngIf="doc.es_obligatorio" class="text-danger me-1">*</span>
         {{ doc.nombre || getNombreTipo(doc.tipo_documento_id) || 'Documento' }}
-
-
       </div>
 
       <!-- Acciones -->
-      <div class="d-flex gap-3 align-items-center">
-        <!-- Subir archivo -->
+      <div class="d-flex gap-2 align-items-center">
         <input type="file" hidden (change)="subirArchivo($event, doc)" #fileInput>
-        <i class="fas fa-upload text-secondary cursor-pointer" title="Subir" (click)="fileInput.click()"></i>
-
-        <!-- Ver -->
-        <i *ngIf="doc.ruta || doc.progreso! > 0" class="fas fa-eye text-secondary cursor-pointer"
-           title="Ver" (click)="verDocumento(doc)"></i>
-
-        <!-- Descargar -->
-        <i *ngIf="doc.ruta || doc.progreso! > 0" class="fas fa-download text-secondary cursor-pointer"
-           title="Descargar" (click)="descargarDocumento(doc)"></i>
-<!-- Validar documento -->
-
-
- <i *ngIf="doc.ruta && isPendiente(doc)" 
-   class="fas fa-check-circle text-success cursor-pointer" 
-   title="Validar" 
-   (click)="validarDocumento(doc, 'completado')"></i>
-
-
-
-
-
-  <!-- Estado completado -->
-  <!-- <i *ngIf="doc.ruta && doc.estado_validacion === 'completado'" 
-     class="fas fa-circle-check text-success cursor-pointer" 
-     title="Completado"></i>
-        <!-- Estado completado -->
-        <!-- <i *ngIf="doc.ruta" class="fas fa-circle-check text-success cursor-pointer" title="Completado"></i> --> -->
-
-        <!-- Eliminar -->
-        <i *ngIf="doc.ruta || doc.progreso! > 0" class="fas fa-trash text-danger cursor-pointer"
-           title="Eliminar" (click)="eliminarDocumento(doc)"></i>
+<!-- (click)="fileInput.click()" -->
+        <i *ngIf="puedeSubir(doc)" class="fas fa-upload text-secondary cursor-pointer" title="Subir" (click)="prepararSubida(doc, fileInput)"></i>
+        <i *ngIf="doc.ruta || doc.progreso! > 0" class="fas fa-eye text-secondary cursor-pointer" title="Ver" (click)="verDocumento(doc)"></i>
+        <i *ngIf="doc.ruta || doc.progreso! > 0" class="fas fa-download text-secondary cursor-pointer" title="Descargar" (click)="descargarDocumento(doc)"></i>
+        <!-- <i *ngIf="doc.ruta && isPendiente(doc)" class="fas fa-check-circle text-body cursor-pointer" title="Validar" (click)="validarDocumento(doc, 'completado')"></i> -->
+       <!-- VALIDAR (gris) -->
+<i *ngIf="doc.ruta && isPendiente(doc)" class="fas fa-check-circle text-secondary cursor-pointer" title="Validar" (click)="validarDocumento(doc, 'completado')"></i>
+       <!-- VALIDADO (verde) -->
+ <i *ngIf="doc.ruta && isDocumentoCompletado(doc)" class="fas fa-check-circle text-success" title="Documento validado"></i>
+        <i *ngIf="doc.ruta || doc.progreso! > 0" class="fas fa-trash text-danger cursor-pointer" title="Eliminar" (click)="eliminarDocumento(doc)"></i>
       </div>
 
     </div>
 
-    <!-- Estado del documento -->
-    <div class="small text-muted mb-2">
-      {{ doc.ruta ? 'Documento subido' : (doc.progreso! > 0 ? 'Subiendo...' : 'Pendiente de subida') }}
-    </div>
-
-    <!-- Barra de progreso -->
-    <div class="progress" style="height: 6px;">
-      <div class="progress-bar bg-success" [style.width]="doc.progreso! + '%'"></div>
+    <!-- Estado y progreso -->
+    <div class="px-3 pb-2">
+      <small class="text-muted">
+        {{ doc.ruta ? 'Documento subido' : (doc.progreso! > 0 ? 'Subiendo...' : 'Pendiente de subida') }}
+      </small>
+      <div class="progress mt-1" style="height: 5px;">
+        <div class="progress-bar bg-success" [style.width]="doc.progreso! + '%'"></div>
+      </div>
     </div>
   </div>
 </div>
 
-<!-- Modal Nuevo Documento -->
+<!-- Modal Nuevo Documento (igual que antes, compacto y funcional) -->
 <div class="modal fade" id="modalNuevoDocumento" tabindex="-1" aria-labelledby="modalNuevoDocumentoLabel" aria-hidden="true">
-  <div class="modal-dialog">
+  <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
+
       <div class="modal-header">
         <h5 class="modal-title" id="modalNuevoDocumentoLabel">Nuevo Documento</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
       </div>
+
       <div class="modal-body">
-                <!-- Botón para mostrar formulario expandido -->
-         <div class="mb-3 text-end" *ngIf="!mostrarCamposExtra">
-          <button type="button" class="btn btn-sm btn-success" (click)="mostrarCamposExtra = true">
-            <i class="fas fa-plus me-1"></i> Añadir
-          </button>
-        </div>
+
         <!-- Tipo de Documento -->
         <div class="mb-3">
           <label for="tipoDocumento" class="form-label">Tipo de Documento</label>
@@ -100,73 +79,43 @@
           </select>
         </div>
 
-        <!-- Nuevo tipo -->
-        <!-- <div class="mb-3">
-          <label for="nuevoTipoDocumento" class="form-label">O ingresa un tipo nuevo</label>
-          <input id="nuevoTipoDocumento" type="text" class="form-control" [(ngModel)]="nuevoDoc.nuevo_tipo_nombre" placeholder="Nombre nuevo">
-        </div> -->
-
-        <!-- Nombre del documento -->
-        <!-- <div class="mb-3">
-          <label for="nombreDocumento" class="form-label">Nombre del Documento</label>
-          <input id="nombreDocumento" type="text" class="form-control" [(ngModel)]="nuevoDoc.nombre" placeholder="Escribe el nombre">
-        </div> -->
-
-        <!-- Comentarios -->
-        <!-- <div class="mb-3">
-          <label for="comentariosDocumento" class="form-label">Comentarios</label>
-          <textarea id="comentariosDocumento" class="form-control" [(ngModel)]="nuevoDoc.comentarios" rows="3" placeholder="Opcional"></textarea>
-        </div> -->
-
-        <!-- Obligatorio -->
-        <!-- <div class="form-check mb-3">
-          <input class="form-check-input" type="checkbox" id="obligatorioDocumento" [(ngModel)]="nuevoDoc.es_obligatorio">
-          <label class="form-check-label" for="obligatorioDocumento">
-            Documento Obligatorio
-          </label>
-        </div> -->
-         <!-- Campos extra que aparecen al clicar "Añadir" -->
-       <!-- Botón Añadir -->
-        <!-- <div class="mb-3 text-end" *ngIf="!mostrarCamposExtra">
+        <!-- Botón Añadir campos extra -->
+        <div class="mb-3 text-end" *ngIf="!mostrarCamposExtra">
           <button type="button" class="btn btn-sm btn-success" (click)="mostrarCamposExtra = true">
-            <i class="fas fa-plus me-1"></i> Añadir
+            <i class="fas fa-plus me-1"></i> Añadir detalles
           </button>
-        </div> -->
+        </div>
 
-        <!-- Campos extra que aparecen solo al hacer click en Añadir -->
+        <!-- Campos extra -->
         <div *ngIf="mostrarCamposExtra">
-          <!-- Nuevo tipo -->
-          <div class="mb-3">
+          <div class="mb-2">
             <label for="nuevoTipoDocumento" class="form-label">O ingresa un tipo nuevo</label>
             <input id="nuevoTipoDocumento" type="text" class="form-control" [(ngModel)]="nuevoDoc.nuevo_tipo_nombre" placeholder="Nombre nuevo">
           </div>
 
-          <!-- Nombre del documento -->
-          <div class="mb-3">
+          <div class="mb-2">
             <label for="nombreDocumento" class="form-label">Nombre del Documento</label>
             <input id="nombreDocumento" type="text" class="form-control" [(ngModel)]="nuevoDoc.nombre" placeholder="Escribe el nombre">
           </div>
 
-          <!-- Comentarios -->
-          <div class="mb-3">
+          <div class="mb-2">
             <label for="comentariosDocumento" class="form-label">Comentarios</label>
-            <textarea id="comentariosDocumento" class="form-control" [(ngModel)]="nuevoDoc.comentarios" rows="3" placeholder="Opcional"></textarea>
+            <textarea id="comentariosDocumento" class="form-control" [(ngModel)]="nuevoDoc.comentarios" rows="2" placeholder="Opcional"></textarea>
           </div>
 
-          <!-- Obligatorio -->
-          <div class="form-check mb-3">
+          <div class="form-check mb-2">
             <input class="form-check-input" type="checkbox" id="obligatorioDocumento" [(ngModel)]="nuevoDoc.es_obligatorio">
-            <label class="form-check-label" for="obligatorioDocumento">
-              Documento Obligatorio
-            </label>
+            <label class="form-check-label" for="obligatorioDocumento">Documento Obligatorio</label>
           </div>
         </div>
 
       </div>
+
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
         <button type="button" class="btn btn-primary" (click)="agregarDocumento(); cerrarModalNuevoDocumento()">Crear Documento</button>
       </div>
+
     </div>
   </div>
 </div>
@@ -176,5 +125,12 @@
   .document-card:hover {
     box-shadow: 0 4px 16px rgba(0,0,0,0.1);
     transition: 0.3s;
+  }
+  .card-body p {
+    margin-bottom: 0.2rem;
+    font-size: 0.95rem;
+  }
+  .progress {
+    border-radius: 3px;
   }
 </style>

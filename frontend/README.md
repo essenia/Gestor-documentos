@@ -164,4 +164,9 @@ creación funcion  getTramites() Para  Obtener trámites desde la tabla tipo_tra
 
 http://localhost:3000/api/tipoTramites
 
+
+Cliente NO puede subir si está el doc validado
+ Abogada/Admin
+
+=>> SÍ puede reemplazar siempre( solo se necessita usar AuthService)
  

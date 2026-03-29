@@ -15,6 +15,7 @@ import { TipoTramite } from '../../interfaces/tipoTramite';
 import { ClientService } from '../../services/client.service';
 import { Caso } from '../../interfaces/caso';
 import * as bootstrap from 'bootstrap';
+import { AuthServiceService } from '../../services/auth-service.service';
 
 @Component({
   selector: 'app-documentos-caso',
@@ -67,7 +68,8 @@ mostrarCamposExtra: boolean = false;
     private tipoDocumentoService: TipoDocumentoService,
         private clienteService: ClientService,
     private tramiteService: TipoDocumentoService,
-  private cdr: ChangeDetectorRef,  private ngZone: NgZone
+  private cdr: ChangeDetectorRef,  private ngZone: NgZone,
+   public authService: AuthServiceService
 
 
   ) {}
@@ -144,21 +146,31 @@ getNombreTramite(idTramite: number): string {
   }
 
   
+puedeSubir(doc: CasoDocumento): boolean {
+  const rol = this.authService.getRol();
 
+  // Abogada o admin → siempre pueden
+  if (rol === 'ABOGADA' || rol === 'ADMIN') {
+    return true;
+  }
+
+  // Cliente  solo si NO está validado
+  return !this.isDocumentoCompletado(doc);
+}
 
 subirArchivo(event: any, doc: CasoDocumento) {
   const file = event.target.files[0];
   if (!file) return;
 
   // Si ya existe un archivo, eliminarlo primero
-  if (doc.ruta) {
-    this.casoService.eliminarDocumento(doc.id).subscribe({
-      next: () => {
-        console.log('Archivo anterior eliminado');
-      },
-      error: (err) => console.error('Error eliminando archivo anterior:', err)
-    });
-  }
+  // if (doc.ruta) {
+  //   this.casoService.eliminarDocumento(doc.id).subscribe({
+  //     next: () => {
+  //       console.log('Archivo anterior eliminado');
+  //     },
+  //     error: (err) => console.error('Error eliminando archivo anterior:', err)
+  //   });
+  // }
 
   // Inicializamos progreso y ruta
   doc.progreso = 0;
@@ -174,14 +186,25 @@ subirArchivo(event: any, doc: CasoDocumento) {
                 doc.ruta = event.body?.documento?.ruta || '';
 
         doc.progreso = 100;
+        doc.estado_validacion = 'PENDIENTE';
+        
       }
+
     },
     error: (err) => console.error('Error subiendo archivo:', err)
   });
 }
 
 
+prepararSubida(doc: CasoDocumento, fileInput: any) {
 
+  if (doc.ruta) {
+    const ok = confirm('Este documento será reemplazado. ¿Continuar?');
+    if (!ok) return;
+  }
+
+  fileInput.click();
+}
 
 verDocumento(doc: CasoDocumento) {
   if (!doc.id) return;
