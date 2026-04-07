@@ -16,6 +16,9 @@ import { ClientService } from '../../services/client.service';
 import { Caso } from '../../interfaces/caso';
 import * as bootstrap from 'bootstrap';
 import { AuthServiceService } from '../../services/auth-service.service';
+import { ToastrService } from 'ngx-toastr';
+import { UserService } from '../../services/user.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-documentos-caso',
@@ -65,6 +68,8 @@ mostrarCamposExtra: boolean = false;
   constructor(
     private route: ActivatedRoute,
     private casoService: CasoService,
+     private toastr: ToastrService,
+        private _userService: UserService,
     private tipoDocumentoService: TipoDocumentoService,
         private clienteService: ClientService,
     private tramiteService: TipoDocumentoService,
@@ -114,7 +119,7 @@ cargarDocumentos() {
     next: (res: any) => {
       this.documentos = res.documentos.map((d: any) => ({
         ...d,
-        progreso: 0  // ⚡ inicializamos
+        progreso: 0  // inicializamos
 
       }));
     },
@@ -187,25 +192,69 @@ subirArchivo(event: any, doc: CasoDocumento) {
 
         doc.progreso = 100;
         doc.estado_validacion = 'PENDIENTE';
+         // Mensaje de éxito
+        this.toastr.success('Documento subido correctamente', 'Éxito');
         
       }
 
     },
-    error: (err) => console.error('Error subiendo archivo:', err)
+    // error: (err) => console.error('Error subiendo archivo:', err)
+     error: (err) => {
+      console.error('Error subiendo archivo:', err);
+      //  Mensaje de error
+      this.toastr.error('Ocurrió un error al subir el documento', 'Error');
+    }
+    
   });
 }
 
 
-prepararSubida(doc: CasoDocumento, fileInput: any) {
+// prepararSubida(doc: CasoDocumento, fileInput: any) {
 
+//   if (doc.ruta) {
+//     const ok = confirm('Este documento será reemplazado. ¿Continuar?');
+//   //   if (!ok) return;
+//   // }
+//    if (!ok) {
+//       this.toastr.info('Reemplazo cancelado', 'Documento');
+//       return;
+//     }
+
+//     this.toastr.info('Selecciona el nuevo archivo', 'Reemplazo');
+//   }
+
+//   fileInput.click();
+// }
+
+
+prepararSubida(doc: CasoDocumento, fileInput: any) {
   if (doc.ruta) {
-    const ok = confirm('Este documento será reemplazado. ¿Continuar?');
-    if (!ok) return;
+    Swal.fire({
+      title: 'Reemplazar documento',
+      text: 'Este documento será reemplazado. ¿Desea continuar?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, reemplazar',
+      cancelButtonText: 'Cancelar',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // El usuario confirmó, dispara el input file
+        fileInput.click();
+
+        // Opcional: mostrar un toastr
+        this.toastr.info('Seleccione un archivo para reemplazar', 'Documento');
+      } else {
+        // Opcional: mensaje si cancela
+        this.toastr.warning('Operación cancelada', 'Documento');
+      }
+    });
+
+    return; // sale de la función para no ejecutar nada más hasta confirmar
   }
 
+  // Si no hay documento previo, solo abre el file
   fileInput.click();
 }
-
 verDocumento(doc: CasoDocumento) {
   if (!doc.id) return;
   window.open(this.casoService.getDocumentoVerURL(doc.id), '_blank');
@@ -227,21 +276,61 @@ descargarDocumento(doc: CasoDocumento) {
 
 
 
-eliminarDocumento(doc: CasoDocumento) {
-  if (!doc.ruta) return; // si no hay archivo, no hace nada
-  if (!confirm('¿Seguro que deseas eliminar este archivo?')) return;
+// eliminarDocumento(doc: CasoDocumento) {
+//   if (!doc.ruta) return; // si no hay archivo, no hace nada
+//   if (!confirm('¿Seguro que deseas eliminar este archivo?')) return;
 
-  this.casoService.eliminarDocumento(doc.id).subscribe({
-    next: () => {
-      // Limpiamos la ruta y progreso del documento
-      doc.ruta = '';       // esto limpia la ruta
-      doc.progreso = 0;    // opcional, reinicia la barra de progreso
-      this.cdr.detectChanges(); // actualiza la vista inmediatamente
-    },
-    error: (err) => console.error('Error al eliminar archivo:', err)
+//   this.casoService.eliminarDocumento(doc.id).subscribe({
+//     next: () => {
+//       // Limpiamos la ruta y progreso del documento
+//       doc.ruta = '';       // esto limpia la ruta
+//       doc.progreso = 0;    // opcional, reinicia la barra de progreso
+
+
+//       this.toastr.success(
+//         'Documento eliminado correctamente',
+//         'Documento'
+//       );
+//       this.cdr.detectChanges(); // actualiza la vista inmediatamente
+//     },
+//     // error: (err) => console.error('Error al eliminar archivo:', err)
+//       error: (err) => {
+//       this.toastr.error('Error al eliminar documento', 'Error');
+//       console.error(err);
+//     }
+//   });
+// }
+eliminarDocumento(doc: CasoDocumento) {
+  Swal.fire({
+    title: 'Eliminar documento',
+    text: '¿Seguro que deseas eliminar este archivo?',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: 'Sí, eliminar',
+    cancelButtonText: 'Cancelar',
+  }).then((result) => {
+    if (result.isConfirmed) {
+      // Llamas al servicio para eliminar el doc
+      this.casoService.eliminarDocumento(doc.id!).subscribe({
+        next: () => {
+          // ACTUALIZAR UI SIN RECARGAR
+          doc.ruta = '';
+          doc.progreso = 0;
+
+          this.toastr.success('Documento eliminado correctamente', 'Éxito');
+           this.cargarDocumentos();
+        },
+        error: (err) => {
+          this.toastr.error('Error al eliminar el documento', 'Error');
+          console.error(err);
+        }
+      });
+    } else {
+      // Opcional: mensaje si canceló
+      this.toastr.info('Eliminación cancelada', 'Documento');
+    }
   });
 }
-
 
 
 
@@ -251,15 +340,57 @@ eliminarDocumento(doc: CasoDocumento) {
 isPendiente(doc: CasoDocumento): boolean {
   return doc.estado_validacion?.toLowerCase() !== 'completado';
 }
+// validarDocumento(doc: CasoDocumento, estado: string) {
+//   const comentario = prompt('Comentario (opcional):') || '';
+
+//   this.casoService.validarDocumento(doc.id, estado, comentario)
+//     .subscribe({
+//       // next: () => this.cargarDocumentos(),
+//       // error: (err) => console.error('Error validando documento:', err)
+//        next: () => {
+//         this.toastr.success('Documento validado correctamente', 'OK');
+//         this.cargarDocumentos();
+//       },
+//       error: (err) => {
+//         this.toastr.error('Error al validar documento', 'Error');
+//         console.error(err);
+//       }
+//     });
+// }
+
 
 validarDocumento(doc: CasoDocumento, estado: string) {
-  const comentario = prompt('Comentario (opcional):') || '';
+  Swal.fire({
+    title: 'Comentario (opcional)',
+    input: 'text', // esto reemplaza al prompt
+    inputPlaceholder: 'Ingrese un comentario...',
+    showCancelButton: true,
+    confirmButtonText: 'Validar',
+    cancelButtonText: 'Cancelar',
+    inputValidator: (value) => {
+      // opcional, puedes validar aquí si quieres
+      return null; // null = no hay error
+    }
+  }).then((result) => {
+    if (result.isConfirmed) {
+      const comentario = result.value || '';
 
-  this.casoService.validarDocumento(doc.id, estado, comentario)
-    .subscribe({
-      next: () => this.cargarDocumentos(),
-      error: (err) => console.error('Error validando documento:', err)
-    });
+      this.casoService.validarDocumento(doc.id, estado, comentario)
+        .subscribe({
+          next: () => {
+            const mensaje = comentario 
+              ? `Documento validado correctamente. Comentario: "${comentario}"`
+              : 'Documento validado correctamente';
+            this.toastr.success(mensaje, 'Éxito');
+            this.cargarDocumentos();
+          },
+          error: (err) => {
+            this.toastr.error('Error al validar documento', 'Error');
+            console.error(err);
+          }
+        });
+    }
+  });
 }
 
 
@@ -294,7 +425,9 @@ validarDocumento(doc: CasoDocumento, estado: string) {
   const nombreDoc = this.nuevoDoc.nuevo_tipo_nombre?.trim() || this.nuevoDoc.nombre?.trim();
 
   if (!nombreDoc) {
-    alert('El documento seleccionado no tiene nombre. Verifique la lista.');
+    // alert('El documento seleccionado no tiene nombre. Verifique la lista.');
+        this.toastr.error('El documento seleccionado no tiene nombre. Verifique la lista.', 'Error');
+
     return;
   }
 
@@ -327,8 +460,15 @@ validarDocumento(doc: CasoDocumento, estado: string) {
   this.nuevoDoc = { nombre: '', comentarios: '', es_obligatorio: true };
 
         this.cdr.detectChanges();
+        // Mensaje de éxito
+      this.toastr.success('Documento agregado correctamente', 'Éxito');
       },
-      error: (err) => console.error('Error creando documento', err)
+      // error: (err) => console.error('Error creando documento', err)
+      error: (err) => {
+      console.error('Error creando documento', err);
+      //Mensaje de error
+      this.toastr.error('Ocurrió un error al agregar el documento', 'Error');
+    }
     });
   }
 

@@ -13,6 +13,9 @@ import { AuthServiceService } from './auth-service.service';
   providedIn: 'root'
 })
 export class CasoService {
+  updateCaso(arg0: number, value: any) {
+    throw new Error('Method not implemented.');
+  }
  public myAppUrl: string;
   public myApiUrl: string;
   constructor(private http: HttpClient,private authService: AuthServiceService) { 
@@ -165,12 +168,26 @@ eliminarDocumento(id: number) {
   );
 }
 
-actualizarEstado(id: number, nuevoEstado: string) {
-  return this.http.put<any>(`${this.myAppUrl}${this.myApiUrl}${id}/estado`, {
-    nuevoEstado
-  });
-}
+//Actualizar Datos del Caso 
 
+  actualizarCaso(id: number, datos: any): Observable<any> {
+    return this.http.put(`${this.myAppUrl}${this.myApiUrl}${id}`, datos);
+  }
+//Actualizar El estado 
+// actualizarEstado(id: number, nuevoEstado: string) {
+//   return this.http.put<any>(`${this.myAppUrl}${this.myApiUrl}${id}/estado`, {
+//     nuevoEstado
+//   });
+// }
+
+//Actualizar el estado 
+actualizarEstado(id: number, nuevoEstado: string) {
+  return this.http.patch<any>(
+    `${this.myAppUrl}${this.myApiUrl}actualizar-estado/${id}`,
+    { nuevoEstado },
+    this.getAuthHeaders() // IMPORTANTE (porque uso JWT)
+  );
+}
   getHistorial(casoId: number): Observable<any> {
     return this.http.get(`${this.myAppUrl}api/casos/historial/${casoId}`);
   }

@@ -7,6 +7,8 @@ import { FormsModule } from '@angular/forms';
 import { Cliente } from '../../interfaces/cliente';
 import { TipoTramite } from '../../interfaces/tipoTramite';
 import { Caso } from '../../interfaces/caso';
+import Swal from 'sweetalert2';
+
 
 @Component({
   selector: 'app-crear-caso',
@@ -50,99 +52,109 @@ export class CrearCasoComponent implements OnInit{
       this.tramites = res;
     });
   }
-   crearCaso() {
-  if (this.clienteSeleccionado && this.tramiteSeleccionado) {
-    this.casoService.crearCaso(this.clienteSeleccionado, this.tramiteSeleccionado)
-      .subscribe((res: any) => {
-        console.log('Caso creado:', res);
+//    crearCaso() {
+//   if (this.clienteSeleccionado && this.tramiteSeleccionado) {
+//     this.casoService.crearCaso(this.clienteSeleccionado, this.tramiteSeleccionado)
+//       .subscribe((res: any) => {
+//         console.log('Caso creado:', res);
 
-        // Accedemos correctamente al ID
-        const idCaso = res.caso.id;
+//         // Accedemos correctamente al ID
+//         const idCaso = res.caso.id;
 
-        // Redirigimos a la vista de documentos del caso
-        this.router.navigate(['/casos', idCaso, 'documentos']);
+//         // Redirigimos a la vista de documentos del caso
+//         this.router.navigate(['/casos', idCaso, 'documentos']);
         
-      }, err => {
-        console.error('Error al crear caso:', err);
-      });
-  }
-}
-
-}
-
-// crearCaso() {
-//   if (!this.clienteSeleccionado || !this.tramiteSeleccionado) {
-//     return;
+//       }, err => {
+//         console.error('Error al crear caso:', err);
+//       });
 //   }
-
-//   //  Buscar cliente seleccionado
-//   const cliente = this.clientes.find(
-//     c => c.id === this.clienteSeleccionado
-//   );
-
-//   // Buscar trámite seleccionado
-//   const tramite = this.tramites.find(
-//     t => t.id === this.tramiteSeleccionado
-//   );
-
-//   const clienteNombre = cliente
-//     ? `${cliente.nombre} ${cliente.apellido}`
-//     : '';
-
-//   const tramiteNombre = tramite
-//     ? tramite.descripcion
-//     : '';
-
-//   this.casoService
-//     .crearCaso(this.clienteSeleccionado, this.tramiteSeleccionado)
-//     .subscribe((res: any) => {
-
-//       const idCaso = res.caso.id;
-
-//       //  PASAMOS LOS NOMBRES
-//       this.router.navigate(
-//         ['/casos', idCaso, 'documentos'],
-//         {
-//           state: {
-//             clienteNombre,
-//             tramiteNombre
-//           }
-//         }
-//       );
-//     }, err => {
-//       console.error('Error al crear caso:', err);
-//     });
 // }
-// }
+crearCaso() {
 
-  // cargarDocumentos() {
-  //   this.casoService.getDocumentosCaso(this.idCaso)
-  //     .subscribe((res: any) => this.documentos = res.documentos);
-  // }
+  // Validación cliente
+  if (!this.clienteSeleccionado) {
+    Swal.fire({
+      icon: 'warning',
+      title: 'Falta seleccionar cliente',
+      text: 'Debe seleccionar un cliente para crear el caso'
+    });
+    return;
+  }
 
-//    clientes: any[] = [];
-//   tramites: any[] = [];
-//   clienteId!: number;
-//   tramiteId!: number;
+  //  Validación trámite
+  if (!this.tramiteSeleccionado) {
+    Swal.fire({
+      icon: 'warning',
+      title: 'Falta seleccionar trámite',
+      text: 'Debe seleccionar un tipo de trámite'
+    });
+    return;
+  }
 
-//     constructor(
-//     private clienteService: ClientService,
-//     private casoService: CasoService,
-//     private router: Router
-//   ) {}
-//   //Método que se ejecuta cuando el componente se carga.
-  //  ngOnInit() {
-  //   this.clienteService.getClientes().subscribe(res => this.clientes = res);
-  //   this.casoService.getTramites().subscribe(res => this.tramites = res);
-  // }
-  //  crearCaso() {
-  //   //subscribe recibe la respuesta del backend
-  //   this.casoService.crearCaso(this.clienteId, this.tramiteId)
-  //     .subscribe(res => {
-  //       //Redirige al usuario a otra ruta.
-  //       this.router.navigate(['/casos', res.caso.id, 'documentos']);
-  //     });
-  // }
+  // Obtener nombres 
+  const cliente = this.clientes.find(c => c.id == this.clienteSeleccionado);
+  const tramite = this.tramites.find(t => t.id == this.tramiteSeleccionado);
+
+  const nombreCliente = cliente 
+    ? `${cliente.nombre} ${cliente.apellido}` 
+    : '';
+
+  const nombreTramite = tramite 
+    ? tramite.descripcion 
+    : '';
+
+  //  Confirmación antes de crear
+  Swal.fire({
+    title: '¿Crear caso?',
+    html: `
+      <b>Cliente:</b> ${nombreCliente} <br>
+      <b>Trámite:</b> ${nombreTramite}
+    `,
+    icon: 'question',
+    showCancelButton: true,
+    confirmButtonText: 'Sí, crear',
+    cancelButtonText: 'Cancelar'
+  }).then((result) => {
+
+    if (result.isConfirmed) {
+
+      this.casoService
+        .crearCaso(this.clienteSeleccionado, this.tramiteSeleccionado)
+        .subscribe({
+          next: (res: any) => {
+
+            const idCaso = res.caso.id;
+
+            //  Mensaje éxito
+            Swal.fire({
+              icon: 'success',
+              title: 'Caso creado correctamente',
+              timer: 1500,
+              showConfirmButton: false
+            }).then(() => {
+              // Redirigir a documentos
+              this.router.navigate(['/casos', idCaso, 'documentos']);
+            });
+
+          },
+          error: (err) => {
+            console.error('Error al crear caso:', err);
+
+            Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: 'No se pudo crear el caso'
+            });
+          }
+        });
+
+    }
+  });
+}
+
+}
+
+
 
 
 

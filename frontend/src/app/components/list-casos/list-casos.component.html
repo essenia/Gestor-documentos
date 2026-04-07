@@ -92,10 +92,18 @@
             <button
               type="button"
               class="btn btn-warning btn-sm me-1"
-              (click)="editarCaso(caso)"
-            >
+               (click)="abrirModalEditar(caso)">
+            
               <i class="fas fa-edit"></i>
             </button>
+
+   <!-- Documentos -->
+   <button
+  class="btn btn-secondary btn-sm me-1"
+  [routerLink]="'/casos/' + caso.id + '/documentos'"
+>
+  <i class="fas fa-folder-open"></i>
+</button>
 
             <!-- Ver historial -->
             <button
@@ -207,6 +215,61 @@
     </div>
   </div>
 </div>
+
+<!-- MODAL EDITAR CASO -->
+<div class="modal fade show"
+     *ngIf="editarModalVisible && casoEditar"
+     style="display:block; background: rgba(0,0,0,0.5)">
+
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+
+      <!-- Header -->
+      <div class="modal-header bg-warning text-dark">
+        <h5 class="modal-title">Editar Caso #{{ casoEditar.id }} de  {{ casoEditar.cliente?.nombre }} {{ casoEditar.cliente?.apellido }} </h5>
+        <button type="button" class="btn-close" (click)="cerrarModalEditar()"></button>
+      </div>
+
+      <!-- Body -->
+      <div class="modal-body">
+
+        <div class="mb-3" *ngIf="casoEditar.estado">
+  <label class="form-label">Cambiar Estado</label>
+  <!-- <select class="form-select" [(ngModel)]="casoEditar.estado">
+    <option value="en_tramite">En Trámite</option>
+    <option value="completado">Completado</option>
+    <option value="archivado">Archivado</option>
+  </select> -->
+<select
+  class="form-select"
+  [(ngModel)]="casoEditar.estado"
+  (change)="cambiarEstado(casoEditar)">
+
+  <option value="en_tramite">En trámite</option>
+  <option value="completado">Completado</option>
+  <option value="archivado">Archivado</option>
+
+</select>
+</div>
+
+        <div class="mb-3">
+          <label class="form-label">Código de caso</label>
+          <input type="text" class="form-control" [(ngModel)]="casoEditar.cod_caso" />
+        </div>
+
+      </div>
+
+      <!-- Footer -->
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="cerrarModalEditar()">Cancelar</button>
+        <button type="button" class="btn btn-primary" (click)="guardarCambios()">Guardar</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
 
 <!-- Ver -->
 

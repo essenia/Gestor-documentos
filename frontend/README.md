@@ -170,3 +170,6 @@ Cliente NO puede subir si está el doc validado
 
 =>> SÍ puede reemplazar siempre( solo se necessita usar AuthService)
  
+
+ voy a reemplazar confirm() por un modal moderno con SweetAlert2
+ npm install sweetalert2

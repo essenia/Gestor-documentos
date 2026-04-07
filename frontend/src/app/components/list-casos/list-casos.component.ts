@@ -4,6 +4,13 @@ import { Caso } from '../../interfaces/caso';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import Swal from 'sweetalert2';
+import { Cliente } from '../../interfaces/cliente';
+import { TipoTramite } from '../../interfaces/tipoTramite';
+import { ToastrService } from 'ngx-toastr';
+import { ErrorService } from '../../services/error.service';
+
+
 
 @Component({
   selector: 'app-list-casos',
@@ -40,11 +47,16 @@ historialCaso: Caso | null = null;
 
   historialVisible = false;
   // casoSeleccionado: any;
+  // Modal de edición
+editarModalVisible = false;
+ // copia del caso que vamos a editar
+casoEditar: Caso | null = null;
+
 
 
 
   
-  constructor(private casoService: CasoService) {}
+  constructor(private casoService: CasoService,  private toastr: ToastrService, private _errorService : ErrorService) {}
  ngOnInit(): void {
     this.cargarCasos();
   }
@@ -147,34 +159,134 @@ cerrarModalVer(): void {
     console.log('Editar caso:', caso);
   }
 
-  cambiarEstado(caso: Caso, event: any) {
-  const nuevoEstado = event.target.value;
+  // Abrir modal de edición
 
-  this.casoService.actualizarEstado(caso.id!, nuevoEstado)
-    .subscribe({
-      next: () => {
-        caso.estado = nuevoEstado;
-      },
-      error: () => {
-        alert('Error al actualizar estado');
-      }
-    });
+// abrirModalEditar(caso: Caso): void {
+//   this.casoEditar = { ...caso };// hacemos copia para no afectar tabla
+//   this.editarModalVisible = true;
+// }
+abrirModalEditar(caso: Caso): void {
+  this.casoEditar = { 
+    ...caso,
+     cliente: caso.cliente || { nombre: '', apellido: '' } as Cliente,
+    tipoTramite: caso.tipoTramite || { descripcion: '' } as TipoTramite
+  };
+  this.editarModalVisible = true;
+}
+
+// Cerrar modal de edición
+cerrarModalEditar() {
+  this.editarModalVisible = false;
+  this.casoEditar = null;
 }
 
 
+// Guardar cambios
+// guardarCambios() {
+//   if (!this.casoEditar) return;
 
-
-// verHistorial(casoId: number) {
-//   this.casoService.getHistorial(casoId).subscribe({
-//     next: (res: any) => {
-//       if (res.ok) {
-//         this.historial = res.historial;
-//         // Aquí podrías abrir un modal para mostrarlo
+//   this.casoService.actualizarCaso(this.casoEditar.id, this.casoEditar)
+//     .subscribe({
+//       next: (res) => {
+//         alert('Caso actualizado correctamente');
+//         this.cargarCasos(); // recarga tabla
+//         this.cerrarModalEditar();
+//       },
+//       error: (err) => {
+//         console.error(err);
+//         alert('Error al actualizar caso');
 //       }
-//     },
-//     error: (err) => console.error(err)
-//   });
+//     });
 // }
+
+guardarCambios() {
+if (!this.casoEditar) return;
+  Swal.fire({
+    title: '¿Guardar cambios?',
+    text: 'Se actualizarán los datos del caso',
+    icon: 'question',
+    showCancelButton: true,
+    confirmButtonText: 'Sí, guardar',
+    cancelButtonText: 'Cancelar'
+  }).then((result) => {
+
+    if (result.isConfirmed) {
+       if (!this.casoEditar) return; 
+
+  this.casoService.actualizarCaso(this.casoEditar.id, this.casoEditar)
+
+        .subscribe({
+          next: () => {
+            Swal.fire({
+              icon: 'success',
+              title: 'Actualizado',
+              text: 'Caso actualizado correctamente',
+              timer: 2000,
+              showConfirmButton: false
+            });
+
+            this.cargarCasos();
+            this.cerrarModalEditar();
+          },
+          error: () => {
+            Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: 'No se pudo actualizar el caso'
+            });
+          }
+        });
+
+    }
+
+  });
+}
+//   cambiarEstado(caso: Caso, event: any) {
+//   const nuevoEstado = event.target.value;
+
+//   this.casoService.actualizarEstado(caso.id!, nuevoEstado)
+//     .subscribe({
+//       next: () => {
+//         caso.estado = nuevoEstado;
+//       },
+//       error: () => {
+//         alert('Error al actualizar estado');
+//       }
+//     });
+// }
+// cambiarEstado(caso: Caso, event: any) {
+//   const nuevoEstado = event.target.value;
+
+//   console.log('ID:', caso.id);
+//   console.log('ESTADO:', nuevoEstado);
+
+//   this.casoService.actualizarEstado(caso.id!, nuevoEstado)
+//     .subscribe({
+//       next: (res) => {
+//         console.log('RESPUESTA OK:', res);
+//         caso.estado = nuevoEstado;
+//       },
+//       error: (err) => {
+//         console.error('ERROR BACKEND:', err);
+//         alert('Error al actualizar estado');
+//       }
+//     });
+// }
+
+
+
+cambiarEstado(caso: Caso) {
+  this.casoService.actualizarEstado(caso.id!, caso.estado)
+    .subscribe({
+      next: () => {
+        this.toastr.success('Estado actualizado correctamente');
+      },
+      error: (err) => {
+        console.error(err);
+        this.toastr.error('Error al actualizar estado');
+      }
+    });
+}
 
 
 verHistorial(caso: Caso) {

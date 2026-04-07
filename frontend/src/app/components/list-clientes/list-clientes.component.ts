@@ -8,6 +8,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
 import { NavbarComponent } from "../navbar/navbar.component";
+import Swal from 'sweetalert2';
+
 @Component({
   selector: 'app-list-clientes',
   imports: [CommonModule, RouterModule, FormsModule],
@@ -205,29 +207,85 @@ volverInicio() {
 }
 
 
-deleteCliente(cliente: Cliente) {
-  // Confirmación nativa (evita problemas de sanitización)
-  const mensaje = `¿Deseas marcar como NO ACTIVO al cliente ${cliente.nombre} ${cliente.apellido}?`;
+// deleteCliente(cliente: Cliente) {
+//   // Confirmación nativa (evita problemas de sanitización)
+//   const mensaje = `¿Deseas marcar como NO ACTIVO al cliente ${cliente.nombre} ${cliente.apellido}?`;
   
-  if (confirm(mensaje)) {
-    // Llamada al backend
-    this.clienteService.desactivarCliente(cliente.id!).subscribe({
-      next: (res) => {
-        // Actualizar objeto cliente local
-        cliente.activo = false;
+//   if (confirm(mensaje)) {
+//     // Llamada al backend
+//     this.clienteService.desactivarCliente(cliente.id!).subscribe({
+//       next: (res) => {
+//         // Actualizar objeto cliente local
+//         cliente.activo = false;
 
-        // Refrescar arrays para que Angular detecte el cambio
-        this.clientes = [...this.clientes];
-        this.filtrarClientes(); // refresca paginación y tabla
+//         // Refrescar arrays para que Angular detecte el cambio
+//         this.clientes = [...this.clientes];
+//         this.filtrarClientes(); // refresca paginación y tabla
 
-        // Mensaje de éxito
-        this.toastr.success('Cliente marcado como no activo');
-      },
-      error: () => {
-        this.toastr.error('Error al marcar cliente como no activo');
-      }
-    });
-  }
+//         // Mensaje de éxito
+//         this.toastr.success('Cliente marcado como no activo');
+//       },
+//       error: () => {
+//         this.toastr.error('Error al marcar cliente como no activo');
+//       }
+//     });
+//   }
+// }
+
+
+
+deleteCliente(cliente: Cliente) {
+
+  Swal.fire({
+    title: 'Desactivar cliente',
+    text: `¿Deseas marcar como NO ACTIVO a ${cliente.nombre} ${cliente.apellido}?`,
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: 'Sí, desactivar',
+    cancelButtonText: 'Cancelar',
+    confirmButtonColor: '#d33',
+    cancelButtonColor: '#6c757d'
+  }).then((result) => {
+
+    if (result.isConfirmed) {
+
+      // Loading mientras se procesa
+      Swal.fire({
+        title: 'Procesando...',
+        text: 'Actualizando cliente',
+        allowOutsideClick: false,
+        didOpen: () => {
+          Swal.showLoading();
+        }
+      });
+
+      // Llamada al backend
+      this.clienteService.desactivarCliente(cliente.id!).subscribe({
+        next: () => {
+
+          //  Actualizar  SIN recargar página
+          cliente.activo = false;
+
+          this.clientes = [...this.clientes];
+          this.filtrarClientes(); // mantiene filtros + paginación
+
+          Swal.close();
+
+          this.toastr.success('Cliente marcado como no activo', 'OK');
+        },
+
+        error: () => {
+          Swal.close();
+
+          this.toastr.error('Error al marcar cliente como no activo', 'Error');
+        }
+      });
+
+    } else {
+      this.toastr.info('Acción cancelada', 'Info');
+    }
+
+  });
 }
 
 }
