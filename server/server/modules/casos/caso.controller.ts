@@ -244,6 +244,58 @@ export const actualizarEstadoCaso = async (idCaso: number) => {
   }
 };
 
+
+//   Actualizar Datos
+export const actualizarCaso = async (req: Request, res: Response) => {
+  try {
+    const idCaso = Number(req.params.id);
+
+    if (isNaN(idCaso)) {
+      return res.status(400).json({
+        ok: false,
+        mensaje: 'ID inválido'
+      });
+    }
+
+    const {
+      id_cliente,
+      tipo_tramite_id,
+      num_expediente,
+      cod_caso
+    } = req.body;
+
+    const caso = await Caso.findByPk(idCaso);
+
+    if (!caso) {
+      return res.status(404).json({
+        ok: false,
+        mensaje: 'Caso no encontrado'
+      });
+    }
+
+    //   el estado  lo dejo tal como estaba
+    await caso.update({
+      id_cliente,
+      tipo_tramite_id,
+      num_expediente,
+      cod_caso
+    });
+
+    return res.json({
+      ok: true,
+      mensaje: 'Caso actualizado correctamente',
+      caso
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      ok: false,
+      mensaje: 'Error al actualizar caso'
+    });
+  }
+};
+
 ///******************************** */
 
 // Obtener documentos de un caso
