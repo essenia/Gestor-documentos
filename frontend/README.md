@@ -173,3 +173,6 @@ Cliente NO puede subir si está el doc validado
 
  voy a reemplazar confirm() por un modal moderno con SweetAlert2
  npm install sweetalert2
+
+gráfico de estados de casos 
+ npm install chart.js   

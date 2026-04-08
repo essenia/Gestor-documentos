@@ -1,102 +1,104 @@
+<!-- <div class="container mt-4">
+  <h2 class="mb-4 text-primary">📊 Dashboard de Casos</h2>
+  <button class="btn btn-dark" (click)="toggleModo()">
+    {{ modoOscuro ? "☀️ Claro" : "🌙 Oscuro" }}
+  </button> -->
+  <div class="container mt-4" [ngClass]="modoOscuro ? 'dark-mode' : 'light-mode'">
 
-<!-- <div class="container mt-4"> -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="text-primary">📊 Dashboard de Casos</h2>
 
-  <!-- Saludo al Admin -->
-  <!-- <div class="mb-4">
-    <h2>Bienvenido, Admin</h2>
-    <p class="text-muted">Resumen general de la aplicación</p>
-  </div> -->
-
-  <!-- Estadísticas principales -->
- <!-- <div class="row g-4 mb-4">
+    <button class="btn btn-dark" (click)="toggleModo()">
+      {{ modoOscuro ? "☀️ Claro" : "🌙 Oscuro" }}
+    </button>
+  </div>
+  <!--  CARDS -->
+  <div class="row g-3 mb-4">
     <div class="col-md-3">
-      <div class="card shadow-sm text-center p-3 bg-primary text-white">
-        <h5>Total Clientes</h5>
-        <p class="display-6">{{ totalClientes }}</p>
+      <!-- ICONO -->
+      <div class="icon-circle bg-primary text-white">
+        <i class="fas fa-folder"></i>
+      </div>
+      <div class="card shadow text-center p-3">
+        <h6>Total</h6>
+        <h3>{{ casos.length }}</h3>
       </div>
     </div>
-        <div class="col-md-3">
-      <div class="card shadow-sm text-center p-3 bg-success text-white">
-        <h5>Total Abogadas</h5>
-        <p class="display-6">{{ totalAbogadas }}</p>
-      </div>
-    </div>
+
     <div class="col-md-3">
-      <div class="card shadow-sm text-center p-3 bg-warning text-dark">
-        <h5>Casos Activos</h5>
-        <p class="display-6">{{ casosActivos }}</p>
+      <div class="icon-circle bg-warning text-white">
+        <i class="fas fa-clock"></i>
+      </div>
+      <div class="card shadow text-center p-3 border-warning">
+        <h6 class="text-warning">Pendientes</h6>
+        <h3>{{ pendientes }}</h3>
       </div>
     </div>
-   <div class="col-md-3">
-      <div class="card shadow-sm text-center p-3 bg-info text-white">
-        <h5>Clientes Nuevos</h5>
-        <p class="display-6">{{ nuevosClientes }}</p>
-      </div>
-    </div>
-  
-  </div> -->
 
-  <!-- Acciones rápidas del Admin -->
-  <!-- <div class="mb-4">
-    <h4>Acciones rápidas</h4>
-    <div class="d-flex gap-3 flex-wrap">
-      <a class="btn btn-primary" [routerLink]="['/sign']" [queryParams]="{ rol: 'ABOGADA' }">
-        Nueva Abogada
-      </a>
-      <a class="btn btn-secondary" [routerLink]="['/sign']" [queryParams]="{ rol: 'CLIENTE' }">
-        Nuevo Cliente
-      </a>
-      <a class="btn btn-success" routerLink="/clientes">
-        Ver Clientes
-      </a>
-      <a class="btn btn-info" routerLink="/abogadas">
-        Ver Abogadas
-      </a>
-      <a class="btn btn-warning" routerLink="/casos">
-        Ver Casos
-      </a>
+    <div class="col-md-3">
+      <div class="icon-circle bg-info text-white">
+        <i class="fas fa-spinner"></i>
+      </div>
+      <div class="card shadow text-center p-3 border-primary">
+        <h6 class="text-primary">En trámite</h6>
+        <h3>{{ enTramite }}</h3>
+      </div>
     </div>
-  </div> -->
 
-  <!-- Últimos registros -->
-  <!-- <div class="row g-4">
-    <div class="col-md-6">
-      <div class="card shadow-sm p-3">
-        <h5>Últimos Clientes</h5>
-         <ul class="list-group list-group-flush">
-          <li class="list-group-item" *ngFor="let cliente of ultimosClientes">
-            {{ cliente.nombre }} {{ cliente.apellido }}
-            <span *ngIf="cliente.dni"> - DNI: {{ cliente.dni }}</span>
-          </li>
-        </ul>
+    <div class="col-md-3">
+      <div class="icon-circle bg-success text-white">
+        <i class="fas fa-check-circle"></i>
       </div>
-    </div>
-    <div class="col-md-6">
-      <div class="card shadow-sm p-3">
-        <h5>Últimas Abogadas</h5>
-        <ul class="list-group list-group-flush">
-          <li class="list-group-item" *ngFor="let abogada of ultimasAbogadas">
-            {{ abogada.nombre }} {{ abogada.apellido }}
-          </li>
-        </ul>
-      </div>
-    </div>
-  </div> -->
-
-  <!-- Espacio para futuros gráficos -->
-  <!-- <div class="row g-4 mt-4">
-    <div class="col-md-6">
-      <div class="card shadow-sm p-3">
-        <h5>Clientes por Abogada</h5>
-        <div class="text-center text-muted py-5">[Gráfico pendiente]</div>
-      </div>
-    </div>
-    <div class="col-md-6">
-      <div class="card shadow-sm p-3">
-        <h5>Casos por Estado</h5>
-        <div class="text-center text-muted py-5">[Gráfico pendiente]</div>
+      <div class="card shadow text-center p-3 border-success">
+        <h6 class="text-success">Completados</h6>
+        <h3>{{ completados }}</h3>
       </div>
     </div>
   </div>
 
-</div> -->
+  <!--  FILA 1: DOS GRÁFICOS -->
+  <div class="row g-4">
+    <!-- GRÁFICO ESTADOS -->
+    <div class="col-md-6">
+      <div class="card shadow p-4">
+        <h5 class="mb-3">Estados de casos</h5>
+        <div style="height: 350px">
+          <canvas id="graficoCasos"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- GRÁFICO POR MES -->
+    <div class="col-md-6">
+      <div class="card shadow p-4">
+        <h5 class="mb-3">Casos por mes</h5>
+        <div style="height: 350px">
+          <canvas id="graficoMeses"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!--  FILA 2: GRÁFICO GRANDE -->
+  <div class="row mt-4">
+    <div class="col-12">
+      <div class="card shadow p-4">
+        <h5 class="mb-3">📈 Evolución de casos</h5>
+        <div style="height: 400px">
+          <canvas id="graficoEvolucion"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ALERTAS -->
+  <div *ngIf="casosAtrasados.length" class="alert alert-danger mt-4">
+    <h5>Casos atrasados</h5>
+    <ul>
+      <li *ngFor="let caso of casosAtrasados">
+        Caso : {{ caso.tipoTramite?.descripcion }} - {{ caso.cliente?.nombre }}
+        {{ caso.cliente?.apellido }}, DNI: {{ caso.cliente?.dni }}
+      </li>
+    </ul>
+  </div>
+</div>

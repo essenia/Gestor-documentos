@@ -1,0 +1,59 @@
+/* body.dark-mode {
+  background-color: #121212;
+  color: #ffffff;
+}
+
+/* Cards */
+/* body.dark-mode .card {
+  background-color: #1e1e1e;
+  color: #fff;
+  border: 1px solid #333;
+} */
+
+/* Tablas */
+/* body.dark-mode .table {
+  color: #fff;
+} */
+
+/* Inputs */
+/* body.dark-mode input,
+body.dark-mode select {
+  background-color: #2a2a2a;
+  color: #fff;
+  border: 1px solid #444;
+} */
+
+/* Modal */
+/* body.dark-mode .modal-content {
+  background-color: #1e1e1e;
+  color: #fff;
+}  */
+.dark-mode {
+  background-color: #121212;
+  color: white;
+}
+
+.dark-mode .card {
+  background-color: #1e1e1e;
+  color: white;
+}
+
+.dark-mode h2,
+.dark-mode h5,
+.dark-mode h6 {
+  color: white;
+}
+
+.dark-mode .alert {
+  background-color: #2c2c2c;
+  color: white;
+}
+.card {
+  transition: all 0.3s ease;
+  border-radius: 12px;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
