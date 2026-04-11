@@ -262,3 +262,34 @@ subir archivo
 validar documento
 
 
+
+
+Cliente recibe email
+  ===> cuando tiene documentos pendientes
+ Abogada recibe email
+
+==> cuando el cliente sube un documento
+
+npm install nodemailer
+Notificaciones dentro de la app
+
+
+campanita 🔔
+lista de eventos
+Panel de notificaciones
+ver quién abrió email
+sistema de notificaciones dentro del dashboard (tipo Facebook)
+plantillas HTML profesionales de email
+
+ recordatorios automáticos inteligentes
+
+
+
+
+ Crear una App Password
+
+   https://myaccount.google.com/apppasswords
+Selecciona:
+App: Correo
+Dispositivo: Otro (ponle nombre, ej: nodemailer)
+tjbj rlbx gzog redu

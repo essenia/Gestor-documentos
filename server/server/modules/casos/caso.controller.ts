@@ -1,3 +1,4 @@
+// import { enviarEmail } from './../../services/email.service';
 
 
 
@@ -10,6 +11,10 @@ import TipoDocumento from '../tipoDocumento/tipoDocumento.model';
 import TipoTramite from '../tipoTramite/tipoTramite.model';
 import { Op } from 'sequelize';
 import HistorialEstado from '../historialEstado/historialEstado.model';
+import  { enviarEmail } from '../../services/email.service';
+ 
+
+// bfzw ukrt zjtu mdkd
 
 
 
