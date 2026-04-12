@@ -12,7 +12,7 @@ import TipoTramite from '../tipoTramite/tipoTramite.model';
 import { Op } from 'sequelize';
 import HistorialEstado from '../historialEstado/historialEstado.model';
 import  { enviarEmail } from '../../services/email.service';
- 
+ import User from '../users/user.model';
 
 // bfzw ukrt zjtu mdkd
 
@@ -27,7 +27,11 @@ try {
     const {id_cliente, tipo_tramite_id} = req.body;
 const id_abogada = (res.locals.user as any).userId; // coincide con tu token
   //Buscar cliente para obtener DNI
-const cliente = await Cliente.findByPk(id_cliente);
+// const cliente = await Cliente.findByPk(id_cliente);
+ //  TRAER CLIENTE CON EMAIL (USER)
+ const cliente = await Cliente.findByPk(id_cliente, {
+  include: [{ model: User }]
+});
 if(!cliente){
     return res.status(404).json({
         ok:false,
@@ -95,6 +99,57 @@ tipo_tramite_id,
       where: { id_caso: idCaso },
       include: [{ model: TipoDocumento, attributes: ['nombre'] }]
     });
+    //    ENVIAR EMAIL AL CLIENTE
+try {
+
+  const cliente = await Cliente.findByPk(id_cliente, {
+  include: [{ model: User }]
+});
+
+// const emailCliente = (cliente as any).User?.email;
+const emailCliente = (cliente as any).usuario?.email;
+const nombre = (cliente as any).nombre;
+
+if (!emailCliente) {
+  console.log("❌ Cliente sin email");
+  return;
+}
+
+  // const emailCliente = (cliente as any).User?.email;
+  // const nombre = (cliente as any).nombre;
+
+  console.log("EMAIL DEL CLIENTE:", emailCliente);
+
+
+  console.log("ENVIANDO EMAIL...");
+
+  await enviarEmail(
+    
+  //   "raouaacampus014@gmail.com",
+  // "TEST SISTEMA",
+  // "<h1>Funciona 🚀</h1>"
+   emailCliente,
+  "Documentos pendientes",
+  `
+    <h2>Hola ${nombre}</h2>
+    <p>Tienes documentos pendientes para tu caso.</p>
+    <p>Accede a la plataforma para subirlos.</p>
+  `
+    // emailCliente,
+    // "Documentos pendientes",
+    // `
+    //   <h2>Hola ${nombre}</h2>
+    //   <p>Tienes documentos pendientes para tu caso.</p>
+    //   <p>Accede a la plataforma para subirlos.</p>
+    // `
+  );
+
+  console.log("EMAIL ENVIADO OK");
+} catch (error) {
+  console.error("Error enviando email:", error);
+}
+console.log("EMAIL CLIENTE:", (cliente as any)?.usuario?.email);
+    // console.log("EMAIL CLIENTE:", (cliente as any)?.email);
  res.status(201).json({
       ok: true,
       caso: nuevoCaso,

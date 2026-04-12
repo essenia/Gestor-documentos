@@ -5,6 +5,8 @@ import Caso from "../casos/caso.model";
 import path from "path";
 import fs from "fs";
 import TipoDocumento from "../tipoDocumento/tipoDocumento.model";
+import User from "../users/user.model";
+import { enviarEmail } from "../../services/email.service";
 
 
 export const subirDocumento = async (req: Request, res: Response) => {
@@ -48,7 +50,78 @@ export const subirDocumento = async (req: Request, res: Response) => {
     documento.estado_validacion = "en_revision";
 
     await documento.save();
+    //  BUSCAR EL CASO
+// const caso: any = await Caso.findByPk(documento.id_caso);
 
+//  BUSCAR LA ABOGADA
+// const abogada: any = await User.findByPk(caso?.id_abogada);
+// try {
+
+// //  ENVIAR EMAIL A LA ABOGADA
+// if (abogada?.email) {
+//   await enviarEmail(
+//     abogada.email,
+//     "📄 Nuevo documento subido",
+//     `
+//     <h3>Nuevo documento subido</h3>
+//     <p>Un cliente ha subido un documento al caso.</p>
+//     <p><b>Código:</b> ${caso.cod_caso}</p>
+//     `
+//   );
+
+// }
+// } catch (error) {
+//   console.log("Error enviando email:", error);
+// }
+try {
+  // 🔍 BUSCAR CASO
+  const caso: any = await Caso.findByPk(documento.id_caso);
+
+  if (!caso) return;
+
+  // =========================
+  // 👩‍⚖️ ABOGADA
+  // =========================
+  const abogada: any = await User.findByPk(caso.id_abogada);
+
+  if (abogada?.email) {
+    await enviarEmail(
+      abogada.email,
+      "📄 Nuevo documento subido",
+      `
+      <h3>Nuevo documento subido</h3>
+      <p>Un cliente ha subido un documento.</p>
+      <p><b>Caso:</b> ${caso.cod_caso}</p>
+      `
+    );
+  }
+
+  // =========================
+  //  ADMINS
+  // =========================
+  const admins: any[] = await User.findAll({
+    where: {
+      id_rol: 1 //   rol
+    }
+  });
+
+  for (const admin of admins) {
+    if (admin.email) {
+      await enviarEmail(
+        admin.email,
+        "📢 Documento subido (admin)",
+        `
+        <h3>Nuevo documento en el sistema</h3>
+        <p>Un cliente ha subido un documento.</p>
+        <p><b>Caso:</b> ${caso.cod_caso}</p>
+        `
+      );
+    }
+  }
+
+} catch (error) {
+  console.log("Error enviando emails:", error);
+}
     res.json({
       ok: true,
       documento,
@@ -331,14 +404,14 @@ if (!caso) {
       }
     }
 
-    // ❌ Si después de todo no hay tipo → error
+    //  Si después de todo no hay tipo → error
     if (!tipoId) {
       return res.status(400).json({
         msg: "Debe seleccionar un tipo de documento o ingresar uno nuevo"
       });
     }
 
-    // 🚀 Crear documento
+    //  Crear documento
     const nuevoDocumento = await CasoDocumento.create({
       id_caso,
       tipo_documento_id: tipoId,
