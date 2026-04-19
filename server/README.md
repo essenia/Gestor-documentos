@@ -293,3 +293,12 @@ Selecciona:
 App: Correo
 Dispositivo: Otro (ponle nombre, ej: nodemailer)
 tjbj rlbx gzog redu
+
+
+¿¿¿¿¿¿¿¿¿¿¿¿¿¿¡¡¡¡¡¡¡¡¡¡¡
+
+Detectar si ha iniciado sesión
+Añades campo: ultimo_login
+Si ultimo_login == null después de 2 días ->> envía recordatorio
+
+npm install node-cron

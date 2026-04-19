@@ -122,22 +122,52 @@ if (!emailCliente) {
 
 
   console.log("ENVIANDO EMAIL...");
+const html = `
+  <div style="font-family: Arial; background:#f4f6f8; padding:20px;">
+    <div style="max-width:600px; margin:auto; background:white; padding:20px; border-radius:10px;">
+      
+      <h2 style="color:#2c3e50;">📂 Nuevo Caso Creado</h2>
 
+      <p>Hola <b>${nombre}</b>,</p>
+
+      <p>Tu caso ha sido creado correctamente en el sistema.</p>
+
+      <p style="background:#fff3cd; padding:10px; border-radius:5px;">
+        ⚠️ Tienes documentos pendientes por subir.
+      </p>
+
+      <div style="text-align:center; margin:20px 0;">
+        <a href="http://localhost:4200"
+           style="background:#3498db; color:white; padding:10px 20px; text-decoration:none; border-radius:5px;">
+          Acceder a la plataforma
+        </a>
+      </div>
+
+      <hr/>
+
+      <p style="font-size:12px; color:#999;">
+        Sistema Legal © ${new Date().getFullYear()}
+      </p>
+
+    </div>
+  </div>
+`;
   await enviarEmail(
-    
   //   "raouaacampus014@gmail.com",
   // "TEST SISTEMA",
-  // "<h1>Funciona 🚀</h1>"
+  
    emailCliente,
-  "Documentos pendientes",
-  `
-    <h2>Hola ${nombre}</h2>
-    <p>Tienes documentos pendientes para tu caso.</p>
-    <p>Accede a la plataforma para subirlos.</p>
-  `
-    // emailCliente,
-    // "Documentos pendientes",
-    // `
+    "📂 Nuevo caso creado - Documentos pendientes",
+  html
+  // "Documentos pendientes",
+  // `
+  //   <h2>Hola ${nombre}</h2>
+  //   <p>Tienes documentos pendientes para tu caso.</p>
+  //   <p>Accede a la plataforma para subirlos.</p>
+  // `
+  //   emailCliente,
+  //   "Documentos pendientes",
+  //   `
     //   <h2>Hola ${nombre}</h2>
     //   <p>Tienes documentos pendientes para tu caso.</p>
     //   <p>Accede a la plataforma para subirlos.</p>

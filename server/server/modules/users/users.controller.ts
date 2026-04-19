@@ -46,6 +46,7 @@ const {email, password, repeatPassword,id_rol} = req.body;
         message: 'Las contraseñas no coinciden'
       });
     }
+    
   // Cifra la contraseña usando bcrypt con 10 rondas de salt
 const hash = await bcrypt.hash(password,10);
     const requiereCambioPassword = id_rol === 3; // CLIENTE
@@ -55,6 +56,7 @@ const hash = await bcrypt.hash(password,10);
         msg : ` Ya existe un Usuario con el nombre ${email}`
     })
    }
+   const passwordPlano = password;
   // Crea un nuevo usuario en la base de datos
 const newUser  = await User.create({
 
@@ -74,7 +76,8 @@ const newUser  = await User.create({
 res.status(201).json({
   id: userId,
   email: newUser.getDataValue(email),
-  id_rol: newUser.getDataValue(id_rol)
+  id_rol: newUser.getDataValue(id_rol),
+  passwordPlano
 });
  } catch (error) {
     console.error(error);
