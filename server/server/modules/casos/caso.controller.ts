@@ -13,6 +13,7 @@ import { Op } from 'sequelize';
 import HistorialEstado from '../historialEstado/historialEstado.model';
 import  { enviarEmail } from '../../services/email.service';
  import User from '../users/user.model';
+import Notificacion from '../notificaciones/notificacion.model';
 
 // bfzw ukrt zjtu mdkd
 
@@ -32,6 +33,7 @@ const id_abogada = (res.locals.user as any).userId; // coincide con tu token
  const cliente = await Cliente.findByPk(id_cliente, {
   include: [{ model: User }]
 });
+
 if(!cliente){
     return res.status(404).json({
         ok:false,
@@ -39,6 +41,8 @@ if(!cliente){
     });
 }
 const dni = (cliente as any ).dni;
+const nombre = (cliente as any ).nombre;
+const apellido = (cliente as any ).apellido;
 const añoActual = new Date().getFullYear();
 //generar código de caso
 const cod_caso = `${dni}-${añoActual}`;
@@ -58,7 +62,9 @@ tipo_tramite_id,
  cod_caso,
       num_expediente,
       año: añoActual,
-      fecha_creacion: new Date()
+      fecha_creacion: new Date(),
+        ultimo_recordatorio: null
+
 
     });
   
@@ -77,6 +83,14 @@ tipo_tramite_id,
   });
 }
 
+    await Notificacion.create({
+  id_usuario: id_abogada,
+  id_caso: idCaso,
+  tipo: 'sistema',
+  titulo: '📂 Documentos pendientes',
+  contenido: `El cliente ${nombre} ${apellido} aún no ha subido documentos`,
+
+});
  //map crea un nuevo array (documentosCaso) transformando cada elemento
  const documentosCaso  = documentosBase.map((doc: any)=>({
   id_caso: idCaso,
@@ -179,6 +193,16 @@ const html = `
   console.error("Error enviando email:", error);
 }
 console.log("EMAIL CLIENTE:", (cliente as any)?.usuario?.email);
+const emailCliente = (cliente as any).usuario?.email;
+
+await Notificacion.create({
+  id_usuario: id_abogada,
+  id_caso: idCaso,
+  tipo: 'email',
+  titulo: '📧 Email enviado',
+  contenido: 'Se ha enviado email al cliente',
+  email_enviado_a: emailCliente
+});
     // console.log("EMAIL CLIENTE:", (cliente as any)?.email);
  res.status(201).json({
       ok: true,
@@ -197,6 +221,122 @@ console.log("EMAIL CLIENTE:", (cliente as any)?.usuario?.email);
     });
 }}
 
+
+//reenviarEmailCaso
+export const reenviarEmailCaso = async (req: Request, res: Response) => {
+    console.log(" REENVIAR EMAIL HIT");
+    const id_abogada = (res.locals.user as any).userId; // coincide con tu token
+
+  try {
+    const idCaso = Number(req.params.id); 
+
+    const caso = await Caso.findByPk(idCaso, {
+      include: [{
+        model: Cliente,
+    as: 'cliente',
+        include: [User]
+        
+      }]
+    });
+
+    if (!caso) {
+      return res.status(404).json({ message: "Caso no encontrado" });
+    }
+
+    const cliente = (caso as any).cliente;
+    const email = cliente?.usuario?.email;
+    const nombre = cliente?.nombre;
+
+    if (!email) {
+      return res.status(400).json({ message: "Sin email" });
+    }
+
+    // const html = `
+    //   <h2>📂 Recordatorio de documentos</h2>
+    //   <p>Hola ${nombre}</p>
+    //   <p>Te reenviamos el acceso a tus documentos pendientes.</p>
+    // `;
+    const html = `
+<div style="font-family: Arial, sans-serif; background:#f4f6f8; padding:20px;">
+  <div style="max-width:600px; margin:auto; background:white; padding:25px; border-radius:10px; box-shadow:0 2px 6px rgba(0,0,0,0.1);">
+    
+    <h2 style="color:#2c3e50; text-align:center;">
+      📂 Recordatorio de Documentación Pendiente
+    </h2>
+
+    <p>Estimado/a <b>${nombre}</b>,</p>
+
+    <p>
+      Nos ponemos en contacto con usted desde <b> Menabogados</b> para recordarle que 
+      actualmente dispone de <b>documentación pendiente</b> en su expediente.
+    </p>
+
+    <p style="background:#fff3cd; padding:12px; border-radius:6px; color:#856404;">
+      ⚠️ Le recomendamos acceder a la plataforma y completar la subida de documentos lo antes posible 
+      para poder continuar con la tramitación de su caso.
+    </p>
+
+    <div style="text-align:center; margin:25px 0;">
+      <a href="http://localhost:4200"
+         style="background:#3498db; color:white; padding:12px 25px; text-decoration:none; border-radius:6px; font-weight:bold;">
+        Acceder a la plataforma
+      </a>
+    </div>
+
+    <hr style="margin:20px 0;" />
+
+    <p><b>Gracias por confiar en nosotros.</b></p>
+
+    <p style="margin-top:15px;">
+      📍 C/ Balmes 139, Piso 4 - 2A<br>
+      🚇 Metro Diagonal / FGC Provença<br>
+      📞 93 459 04 43 / 608 055 820<br>
+      ✉️ menabogados@gmail.com
+    </p>
+
+    <p style="font-size:13px; color:#555;">
+      🕒 <b>Atención presencial:</b> sólo con cita previa<br>
+      Lunes a Viernes: 10:00 - 14:00<br>
+      Lunes, Miércoles y Jueves: 16:00 - 19:00
+    </p>
+
+    <p style="font-size:12px; color:#999; text-align:center; margin-top:20px;">
+      © ${new Date().getFullYear()} Secretaria Menabogados - Todos los derechos reservados
+    </p>
+
+  </div>
+</div>
+`;
+
+    await enviarEmail(email, "Reenvío de documentos", html);
+    await Notificacion.create({
+  id_usuario: id_abogada,
+  id_caso: idCaso,
+  tipo: 'email',
+  contenido: 'Se ha reenviado el email de documentos',
+  email_enviado_a: email
+});
+
+    return res.json({ ok: true, message: "Email reenviado" });
+// await Notificacion.create({
+//   id_usuario: id_abogada,
+//   id_caso: idCaso,
+//   tipo: 'email',
+//   titulo: '🔁 Recordatorio enviado',
+//   contenido: 'Se ha reenviado el email de documentos',
+//   email_enviado_a: email
+// });
+    
+
+  } catch (error: any) {
+  console.error(" ERROR REENVIAR:", error);
+
+  return res.status(500).json({
+    message: "Error",
+    error: error.message
+  });
+}
+};
 /// obtener todos los casos 
 
 

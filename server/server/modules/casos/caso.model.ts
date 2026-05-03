@@ -72,7 +72,12 @@ const Caso = database.define('casos', {
   fecha_estado: {
     type: DataTypes.DATE,
     defaultValue: DataTypes.NOW
-  }
+  },
+  //
+  ultimo_recordatorio: {
+  type: DataTypes.DATE,
+  allowNull: true
+}
 
 
 }, {
